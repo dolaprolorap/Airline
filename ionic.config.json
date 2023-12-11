@@ -1,0 +1,7 @@
+{
+  "name": "airline-mobile",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "custom"
+}
