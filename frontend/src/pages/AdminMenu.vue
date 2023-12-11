@@ -1,14 +1,25 @@
-<template>
-  <div class="q-pa-md">
-    <q-toolbar class="bg-primary text-white">
-      <q-btn flat color="primary" label="Flat"/>
-    </q-toolbar>
-  </div>
-</template>
+<script setup lang='ts'>
+import { ref } from 'vue';
 
-<script setup lang="ts">
+const office = ref('All offices');
+
+const officeOptions = ref([
+  'All offices',
+  'Abu Dhabi',
+  'Bahrain',
+  'Doha'
+])
 
 </script>
+<template>
+  <q-page class='row items-center justify-center'>
+    <q-card>
+      <q-card-section>
+        <q-select filled v-model='office' :options='officeOptions' label='Filled' />
+      </q-card-section>
+    </q-card>
+  </q-page>
+</template>
 
 <style scoped lang='sass'>
 
