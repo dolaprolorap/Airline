@@ -44,11 +44,6 @@
   padding: 0;
 }
 
-p {
-  margin: 0;
-  padding: 0;
-}
-
 .main {
   background-image: url('/src/assets/img/logo_1.png');
   background-repeat: no-repeat;
@@ -65,9 +60,9 @@ p {
   background-color: white;
   position: absolute;
   bottom: 0;
+  width: 350px;
   left: 50%;
   transform: translateX(-50%);
-  width: 95%;
   border: 2px solid black;
   overflow-x: hidden;
   overflow-y: scroll;
@@ -97,21 +92,22 @@ p {
   font-weight: bold;
 }
 
-.about {
-  font-size: 15px;
+.mainmenu-router__link {
+  text-decoration: none;
+  display: block;
+  width: 350px;
+  margin: auto;
 }
 
 .back-button {
-  margin-top: 30px;
-  margin-left: 12px;
   padding: 15px 90px;
   border-radius: 30px;
   font-size: 17px;
   font-weight: 800;
+  margin-top: 20px;
   background-color: white;
   width: 350px;
-  display: inline-block;
-  text-align: center;
+  display: block;
   cursor: pointer;
 }
 
