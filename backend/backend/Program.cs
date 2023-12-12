@@ -41,6 +41,8 @@ builder.Services.AddScoped<ITokenManagerService, TokenManagerService>();
 builder.Services.AddScoped<ITokenCreatorService, TokenCreatorService>();
 builder.Services.AddScoped<ITrackerService, TrackerService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IScheduleService, ScheduleService>();
+builder.Services.AddScoped<IConvertScheduleRecordService, ConvertScheduleRecordService>();
 
 var app = builder.Build();
 
