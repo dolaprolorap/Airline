@@ -3,6 +3,7 @@ import MainMenu from '../pages/MainMenu.vue'
 import AboutAirline from '../pages/AboutAirline.vue'
 import Amenities from '../pages/Amenities.vue'
 import SearchFlights from '../pages/SearchFlights.vue'
+import ReserveSeat from '../pages/ReserveSeat.vue';
 
 const routes = [
     {
@@ -20,6 +21,10 @@ const routes = [
     {
         path: '/search-flights',
         component: SearchFlights
+    },
+    {
+        path: '/reserve-seat',
+        component: ReserveSeat
     }
 ]
 

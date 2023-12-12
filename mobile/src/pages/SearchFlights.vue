@@ -47,69 +47,71 @@
 </template>
   
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+  import { ref, computed } from 'vue';
 
-const departurePoint = ref('');
-const arrivalPoint = ref('');
-const departureDate = ref('');
-const shouldSearch = ref(false);
-const selectedDate = ref('');
-const flights = ref([
-  {
-    id: 1,
-    flightNumber: '001',
-    price: 100,
-    time: '12:00',
-    aircraft: 'XXXXXXX',
-    date: '2023-12-15'
-  },
-  {
-    id: 2,
-    flightNumber: '002',
-    price: 120,
-    time: '14:30',
-    aircraft: 'XXXXXXX',
-    date: '2023-12-16'
-  },
-  {
-    id: 3,
-    flightNumber: '003',
-    price: 90,
-    time: '08:45',
-    aircraft: 'XXXXXXX',
-    date: '2023-12-16'
-  },
-  {
-    id: 4,
-    flightNumber: '004',
-    price: 110,
-    time: '10:15',
-    aircraft: 'XXXXXXX',
-    date: '2023-12-17'
-  }
-]);
+  const departurePoint = ref('');
+  const arrivalPoint = ref('');
+  const departureDate = ref('');
+  const shouldSearch = ref(false);
+  const selectedDate = ref('');
+  const flights = ref([
+    {
+      id: 1,
+      flightNumber: '001',
+      price: 100,
+      time: '12:00',
+      aircraft: 'XXXXXXX',
+      date: '2023-12-15'
+    },
+    {
+      id: 2,
+      flightNumber: '002',
+      price: 120,
+      time: '14:30',
+      aircraft: 'XXXXXXX',
+      date: '2023-12-16'
+    },
+    {
+      id: 3,
+      flightNumber: '003',
+      price: 90,
+      time: '08:45',
+      aircraft: 'XXXXXXX',
+      date: '2023-12-16'
+    },
+    {
+      id: 4,
+      flightNumber: '004',
+      price: 110,
+      time: '10:15',
+      aircraft: 'XXXXXXX',
+      date: '2023-12-17'
+    },
 
-const updateDate = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  departureDate.value = target.value;
-};
+  ]);
 
-const searchFlights = () => {
-  shouldSearch.value = true;
-  if (shouldSearch.value) {
-    selectedDate.value = departureDate.value;
-  }
-};
+  const updateDate = (event: Event) => {
+    const target = event.target as HTMLInputElement;
+    departureDate.value = target.value;
+  };
 
-const filteredFlights = computed(() => {
-  return shouldSearch.value && selectedDate.value
-    ? flights.value.filter((flight) => flight.date === selectedDate.value)
-    : flights.value;
-});
+  const searchFlights = () => {
+    shouldSearch.value = true;
+    if (shouldSearch.value) {
+      selectedDate.value = departureDate.value;
+    }
+  };
+
+  const filteredFlights = computed(() => {
+    return shouldSearch.value && selectedDate.value
+      ? flights.value.filter((flight) => flight.date === selectedDate.value)
+      : flights.value;
+  });
 
 </script>
   
 <style scoped>
+
 .logo {
     background-image: url('/src/assets/img/logo_1.png');
     background-repeat: no-repeat;
@@ -180,29 +182,35 @@ select, input {
     cursor: pointer;
 }
 
-.back-button {
-    margin-top: 30px;
-    margin-left: 12px;
-    padding: 15px 90px;
-    border-radius: 30px;
-    font-size: 17px;
-    font-weight: 800;
-    background-color: white;
-    width: 350px;
-    display: inline-block;
-    text-align: center;
-    cursor: pointer;
+.mainmenu-router__link {
+  text-decoration: none;
+  display: block;
+  width: 350px;
+  margin: auto;
 }
 
-.list_of_flights{
+.back-button {
+  padding: 15px 90px;
+  border-radius: 30px;
+  font-size: 17px;
+  font-weight: 800;
+  background-color: white;
+  width: 350px;
+  display: block;
+  margin: auto;
+  cursor: pointer;
+}
+
+.list_of_flights {
   max-height: 200%;
+  display: block;
   position: absolute;
   top: 170px;
-  width: 400px;
-  overflow-x: hidden;
   overflow-y: scroll;
+  left: 50%;
+  transform: translateX(-53%);
+  width: 410px;
   right: 5px;
-
 }
 
 .list_of_flights ul {

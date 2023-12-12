@@ -4,7 +4,9 @@
       <router-link class="about-router__link" to="/search-flights">
           <button>Search Flights</button>
       </router-link>
-      <button>Reserve Seat</button>
+      <router-link class="about-router__link" to="/reserve-seat">
+        <button>Reserve Seat</button>
+      </router-link>
       <router-link class="about-router__link" to="/amenities">
           <button>Amenities</button>
       </router-link>
