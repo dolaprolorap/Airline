@@ -49,7 +49,7 @@
   background-repeat: no-repeat;
   background-position: center top;
   width: 100%;
-  min-height: 500px;
+  min-height: 600px;
   margin-top: 40px;
   position: relative;
 }
@@ -104,7 +104,7 @@
   border-radius: 30px;
   font-size: 17px;
   font-weight: 800;
-  margin-top: 20px;
+  margin-top: 65px;
   background-color: white;
   width: 350px;
   display: block;
