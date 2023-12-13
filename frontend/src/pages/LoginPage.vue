@@ -7,18 +7,24 @@
       <q-img src="logo.png" alt="Logo"/>
       <q-card-section class="full-width column" style="row-gap: 16px">
         <q-input
+            ref="nameRef"
             label="Username"
             class="fit"
-            v-model="username"
+            v-model="name"
             outlined
             dense
+            lazy-rules
+            :rules="nameRules"
         />
         <q-input
+            ref="ageRef"
             label="Password"
             class="fit"
             v-model="password"
             outlined
             dense
+            lazy-rules
+            :rules="passwordRules"
         />
       </q-card-section>
       <q-card-section class="row full-width justify-between q-px-xl">
@@ -30,22 +36,21 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from 'vue';
+import { ref } from 'vue'
 
-let username = '';
-let password = '';
-let errors: string[];
-function SubmitForm() {
-  errors = [];
+const name = ref(null)
+const nameRef = ref(null)
+const password = ref(null)
+const passwordRef = ref(null)
 
-  if (username === '')
-    errors.push('The username is missing')
+const nameRules = [
+  (val?: string) => (val && val.length > 0) || 'Please enter username'
+]
+const passwordRules = [
+  (val?: string) => (val && val.length > 0) || 'Please enter password',
+]
 
-  if (password === '')
-    errors.push('The password is missing')
 
-
-}
 </script>
 
 <style scoped lang="sass"></style>
