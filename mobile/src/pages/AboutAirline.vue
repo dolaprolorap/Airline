@@ -36,7 +36,7 @@ p {
   background-position: center top;
   background-size: 400px;
   width: 100%;
-  min-height: 500px;
+  min-height: 620px;
   position: relative;
 }
 
@@ -71,7 +71,7 @@ p {
   border-radius: 30px;
   font-size: 17px;
   font-weight: 800;
-  margin-top: 20px;
+  margin-top: 80px;
   background-color: white;
   width: 350px;
   display: block;
