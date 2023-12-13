@@ -84,18 +84,9 @@ namespace backend.ServerResponse
                         Data
                     });
                 case StatusResponseType.UserFail:
-                    return new BadRequestObjectResult(new
-                    {
-                        Msg = UserMsg,
-                        Data
-                    });
+                    return new BadRequestObjectResult((object?)null);
                 case StatusResponseType.ServerFail:
-                    var value = new
-                    {
-                        Msg = UserMsg,
-                        Data
-                    };
-                    return new ObjectResult(value)
+                    return new ObjectResult(null)
                     {
                         StatusCode = 500
                     };

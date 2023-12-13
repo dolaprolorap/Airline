@@ -85,6 +85,9 @@ namespace backend.Services
         { 
             _unit.UserRepo.ReadWhere(u => u.Email == email).Load();
 
+            _unit.WarntypeRepo.ReadWhere(wt => true).Load();
+            _unit.TrackerrecordtypeRepo.ReadWhere(wt => true).Load();
+
             var qRecords = _unit.TrackerrecordRepo.ReadWhere(t => t.User!.Email == email).ToList().Select((t, i) => new TrackerRecord(t));
 
             return new StatusResponse(StatusResponseType.Success, "", "", qRecords);

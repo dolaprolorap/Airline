@@ -1,6 +1,7 @@
 ﻿using backend.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace backend.Controllers
 {
@@ -16,9 +17,13 @@ namespace backend.Controllers
             _trackerService = trackerService;
         }
 
-        [HttpGet("GetActivity")]
-        public IActionResult GetActivity([FromQuery] string email)
+        [HttpGet("GetCurrentUserActivity")]
+        public IActionResult GetActivity()
         {
+            var claimsIdentity = HttpContext.User.Identity as ClaimsIdentity;
+            if (claimsIdentity == null) return Unauthorized();
+            var email = claimsIdentity.Name;
+            if (email == null) return Unauthorized();
             return _trackerService.GetByEmail(email).ConvertToActionResult();
         }
     }

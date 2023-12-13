@@ -41,7 +41,7 @@ namespace backend.Controllers
         }
 
         [HttpPost("EditFlightsByCsv")]
-        public IActionResult EditFlights()
+        public IActionResult EditFlightsByCsv()
         {
             var csvFile = HttpContext.Request.Form.Files.First();
 

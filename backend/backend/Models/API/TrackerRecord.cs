@@ -5,15 +5,15 @@ namespace backend.Models.API
     public class TrackerRecord
     {
         public DateTime? DateTime { get; set; }
-        public int? RecordType { get; set; }
-        public int? WarnType { get; set; }
+        public string? RecordType { get; set; }
+        public string? WarnType { get; set; }
         public string? Description { get; set; }
 
         public TrackerRecord(TrackerRecordDb recordDb)
         {
             DateTime = recordDb.Datetime;
-            RecordType = recordDb.Recordtype;
-            WarnType = recordDb.Warntype;
+            RecordType = recordDb.RecordtypeNavigation!.Name;
+            WarnType = recordDb.WarntypeNavigation!.Name;
             Description = recordDb.Description;
         }
     }

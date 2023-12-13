@@ -2,9 +2,9 @@
 {
     public class EditFlight
     {
-        public int Id { get; set; }
-        public DateOnly Date { get; set; }
-        public TimeOnly Time { get; set; }
+        public int FlightNumber { get; set; }
+        public string Date { get; set; }
+        public string Time { get; set; }
         public int EconomyPrice { get; set; }
     }
 }

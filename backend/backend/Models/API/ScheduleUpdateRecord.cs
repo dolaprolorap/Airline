@@ -5,7 +5,7 @@
         public ScheduleUpdateRecordType Type { get; set; }
         public DateOnly Date { get; set; }
         public TimeOnly Time { get; set; }
-        public int FlightId { get; set; }
+        public int FlightNumber { get; set; }
         public string FromAirportCode { get; set; }
         public string ToAirportCode { get; set; }
         public int AircraftId { get; set; }

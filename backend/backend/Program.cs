@@ -8,6 +8,8 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors();
+
 builder.Services.AddAuthentication(
     options => {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -45,6 +47,8 @@ builder.Services.AddScoped<IScheduleService, ScheduleService>();
 builder.Services.AddScoped<IConvertScheduleRecordService, ConvertScheduleRecordService>();
 
 var app = builder.Build();
+
+app.UseCors(builder => builder.WithOrigins("https://localhost:9000"));
 
 if (app.Environment.IsDevelopment())
 {

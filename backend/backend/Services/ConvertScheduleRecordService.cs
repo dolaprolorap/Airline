@@ -1,4 +1,5 @@
 ﻿using backend.Models.API;
+using System.Globalization;
 
 namespace backend.Services
 {
@@ -71,7 +72,7 @@ namespace backend.Services
 
             if (int.TryParse(vals[pos["FlightId"]], out int flightId))
             {
-                record.FlightId = flightId;
+                record.FlightNumber = flightId;
             }
             else
             {
@@ -92,9 +93,9 @@ namespace backend.Services
                 return false;
             }
 
-            if (int.TryParse(vals[pos["Price"]], out int price))
+            if (double.TryParse(vals[pos["Price"]], CultureInfo.InvariantCulture, out double price))
             {
-                record.EconomyPrice = price;
+                record.EconomyPrice = (int)price;
             }
             else
             {
