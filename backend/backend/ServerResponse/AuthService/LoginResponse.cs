@@ -15,14 +15,14 @@
             switch (type)
             {
                 case LoginResponseType.UserWasNotFound:
-                    Status = StatusResponseType.UserFail;
+                    Status = StatusResponseType.Success;
                     LoggerMsg = string.Format("User with email '{0}' not found", userEmail);
-                    UserMsg = "User was not found";
+                    UserMsg = "UserNotFound";
                     break;
                 case LoginResponseType.InvalidPassword:
                     Status = StatusResponseType.UserFail;
                     LoggerMsg = string.Format("Invalid password '{0}' for user '{1}'", password, userEmail);
-                    UserMsg = "Invalid password";
+                    UserMsg = "InvalidPwd";
                     break;
                 case LoginResponseType.TokensNotUpdated:
                     Status = StatusResponseType.ServerFail;
@@ -32,6 +32,7 @@
                 case LoginResponseType.Ok:
                     Status = StatusResponseType.Success;
                     LoggerMsg = string.Format("User '{0}' loged in", userEmail);
+                    UserMsg = "LoggedIn";
                     break;
             }
 

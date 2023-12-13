@@ -21,7 +21,7 @@ namespace backend.ServerResponse.AuthService
                 case RegisterResponseType.UserAlreadyExists:
                     Status = StatusResponseType.Success;
                     LoggerMsg = string.Format("User with email '{0}' already exists", userEmail);
-                    UserMsg = "User already exists";
+                    UserMsg = "UserAlreadyExists";
                     break;
                 case RegisterResponseType.RoleIdWasNotFound:
                     Status = StatusResponseType.UserFail;
@@ -41,6 +41,7 @@ namespace backend.ServerResponse.AuthService
                 case RegisterResponseType.Ok:
                     Status = StatusResponseType.Success;
                     LoggerMsg = "User has been registrated";
+                    UserMsg = "UserCreated";
                     break;
             }
         }

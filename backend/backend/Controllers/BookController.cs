@@ -5,7 +5,7 @@ namespace backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class BookFlightCotroller : ControllerBase
+    public class BookController : ControllerBase
     {
         [HttpPost("SearchFlights")]
         public IActionResult SearchFlights([FromBody] SearchFlightModel searchFlight)

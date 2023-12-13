@@ -8,7 +8,16 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors();
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: MyAllowSpecificOrigins, policy => {
+        policy.AllowAnyHeader();
+        policy.AllowAnyMethod();
+        policy.AllowAnyOrigin();
+    });
+});
 
 builder.Services.AddAuthentication(
     options => {
@@ -48,7 +57,7 @@ builder.Services.AddScoped<IConvertScheduleRecordService, ConvertScheduleRecordS
 
 var app = builder.Build();
 
-app.UseCors(builder => builder.WithOrigins("https://localhost:9000"));
+app.UseCors(MyAllowSpecificOrigins);
 
 if (app.Environment.IsDevelopment())
 {

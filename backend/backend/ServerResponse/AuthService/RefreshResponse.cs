@@ -27,9 +27,9 @@
                     UserMsg = "Token error";
                     break;
                 case RefreshResponseType.RefreshTokenExpired:
-                    Status = StatusResponseType.UserFail;
+                    Status = StatusResponseType.Success;
                     LoggerMsg = string.Format("Refresh token expired");
-                    UserMsg = "Token error";
+                    UserMsg = "RefreshTokenExpired";
                     break;
                 case RefreshResponseType.FailUpdateToken:
                     Status = StatusResponseType.UserFail;
@@ -41,6 +41,7 @@
                     LoggerMsg = string.Format("Token '{0}' refreshed to '{1}'", 
                         oldAccessToken ?? "null",
                         newAccessToken ?? "null");
+                    UserMsg = "RefreshTokenUpdated";
                     break;
             }
 

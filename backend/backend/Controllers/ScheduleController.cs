@@ -6,11 +6,13 @@ using backend.ServerResponse.AuthService;
 using Microsoft.EntityFrameworkCore;
 using backend.Models.DB;
 using backend.Services;
+using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class ScheduleController : ControllerBase
     {
         private IUnitOfWork _unit;
