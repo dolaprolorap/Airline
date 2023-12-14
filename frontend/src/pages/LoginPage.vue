@@ -17,15 +17,30 @@
             :rules="usernameRules"
         />
         <q-input
-            ref="ageRef"
-            label="Password"
-            class="fit"
+            ref="passwordRef"
             v-model="password"
-            outlined
+            class="fit"
             dense
+            outlined
             lazy-rules
             :rules="passwordRules"
-        />
+            :type="isPwd ? 'password' : 'text'"
+            label="Password"
+        >
+          <template v-slot:append>
+            <q-icon
+                :name="isPwd ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="isPwd = !isPwd"
+            />
+          </template>
+        </q-input>
+      </q-card-section>
+      <q-card-section
+          @submit.prevent="SubmitForm"
+          v-if="error.length !== 0"
+          class="row full-width justify-center text-negative">
+        {{ error }}
       </q-card-section>
       <q-card-section class="row full-width justify-between q-px-xl">
         <q-btn @click="SubmitForm" class="col-4" color="primary" label="Log in"/>
@@ -37,12 +52,20 @@
 
 <script setup lang="ts">
 import {ref} from 'vue'
-import axios from 'axios'
+import {api} from 'src/boot/axios'
+import {useRouter} from "vue-router";
+import {useAuthStore} from "../stores/store";
 
 const username = ref(null)
 const usernameRef = ref(null)
 const password = ref(null)
 const passwordRef = ref(null)
+const authStore = useAuthStore();
+const isPwd = ref(true);
+
+const error = ref('');
+
+const router = useRouter();
 
 const usernameRules = [
   (val?: string) => (val && val.length > 0) || 'Please enter username'
@@ -52,16 +75,35 @@ const passwordRules = [
 ]
 
 function SubmitForm() {
+
+  error.value = '';
+
   const formData = {
-    username: username,
-    password: password
+    email: username.value,
+    password: password.value
   }
-  axios.post("/api/Auth/Login", formData)
+
+  if (username.value === null || password.value === null)
+    error.value = 'Wrong username or password';
+
+  api.post("/Auth/Login", formData)
       .then(response => {
+
         const msg = response.data.msg;
+
+        if (msg === 'UserNotFound') {
+          error.value = 'Wrong username or password';
+        }
+
         const accessToken = response.data.data.accessToken;
         const refreshToken = response.data.data.refreshToken;
 
+        localStorage.getItem('')
+
+        authStore.SetTokens({accessToken, refreshToken});
+        authStore.SetUsername(username.value);
+
+        router.push({path: '/admin'});
       })
 }
 
