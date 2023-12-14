@@ -25,6 +25,7 @@ namespace backend.Controllers
         }
 
         [HttpGet("GetSchedule")]
+        [AllowAnonymous]
         public IActionResult GetSchedule([FromQuery] ScheduleFilter scheduleFilter)
         {
             return _schedule.GetSchedule(scheduleFilter).ConvertToActionResult();
