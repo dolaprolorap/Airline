@@ -30,7 +30,7 @@ const routes = [
 
 const router = createRouter({
     routes,
-    history: createWebHistory('/subdirectory/'),
+    history: createWebHistory('/'),
 });
 
 export default router;
