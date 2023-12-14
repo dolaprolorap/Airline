@@ -6,6 +6,7 @@ using User = backend.Models.DB.User;
 using Token = backend.Models.DB.Token;
 using backend.Services;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace backend.Controllers
 {
@@ -39,6 +40,17 @@ namespace backend.Controllers
         {
             var status = _authService.Register(registerUser);
             return status.ConvertToActionResult();
+        }
+
+        [HttpGet("GetMyself")]
+        [Authorize]
+        public IActionResult GetMyself()
+        {
+            var claimsIdentity = HttpContext.User.Identity as ClaimsIdentity;
+            if (claimsIdentity == null) return Unauthorized();
+            var email = claimsIdentity.Name;
+            if (email == null) return Unauthorized();
+            return _authService.GetMyself(email).ConvertToActionResult();
         }
     }
 }

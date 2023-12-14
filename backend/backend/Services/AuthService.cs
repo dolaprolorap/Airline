@@ -7,6 +7,7 @@ using backend.ServerResponse.AuthService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using CustomUserManager = backend.Custom.UserManager;
 
 namespace backend.Services
 {
@@ -161,6 +162,30 @@ namespace backend.Services
                 Email = registerUser.Email,
                 Password = registerUser.Password
             });
+        }
+
+        public GetMyselfResponse GetMyself(string email)
+        {
+            var user = _unit.UserRepo.ReadFirst(user => user.Email == email);
+            if (user == null)
+            {
+                return new GetMyselfResponse(
+                    GetMyselfResponseType.UserNotFound,
+                    email: email);
+            }
+
+            var userManager = new CustomUserManager(_unit);
+            var status = userManager.ConvertUser(user);
+
+            if (status.ResponseType != ServerResponse.Custom.UserManager.ConvertUserResponseType.Ok)
+            {
+                return new GetMyselfResponse(GetMyselfResponseType.ConvertError);
+            }
+
+            return new GetMyselfResponse(
+                GetMyselfResponseType.Ok,
+                email: email,
+                userData: status.User);
         }
     }
 }
