@@ -1,148 +1,142 @@
 <template>
-<div class="logo"></div>
-<div class="form-container">
-    
+  <div class="logo"></div>
+  <div class="form-container">
     <div class="form-content">
-        <select v-model="departurePoint">
-            <option value="">From</option>
-            <option value="City1">City 1</option>
-            <option value="City2">City 2</option>
-        </select>
+      <select>
+        <option value="">From</option>
+        <option v-for="airport in airports" :key="airport.departurePoint" :value="airport.departurePoint">{{ airport.departurePoint }}</option>
+      </select>
 
-        <select v-model="arrivalPoint">
-            <option value="">To</option>
-            <option value="CityA">City A</option>
-            <option value="CityB">City B</option>
-        </select>
+      <select>
+        <option value="">To</option>
+        <option v-for="airport in airports" :key="airport.arrivalPoint" :value="airport.arrivalPoint">{{ airport.arrivalPoint }}</option>
+      </select>
 
-        <div class="date-input-container">
-            <label for="departureDate" :class="{ 'label-hidden': departureDate }">XX.XX.XXXX</label>
-            <input
+      <div class="date-input-container">
+        <label for="departureDate" :class="{ 'label-hidden': departureDate }">XX.XX.XXXX</label>
+        <input
             id="departureDate"
             type="date"
             :value="departureDate"
             @input="updateDate"
-            />
-        </div>
+        />
+      </div>
 
-        <button class="search" @click="searchFlights">Search Flights</button>
+      <button class="search" @click="searchFlights">Search Flights</button>
 
-        <div class="list_of_flights">
-            <ul>
-                <li v-for="flight in filteredFlights" :key="flight.id" class="flight">
-                <div class="flight-details">
-                    <div class="flight-info">✈︎ flight number : {{ flight.flightNumber }}</div>
-                    <div class="flight-info">Price : {{ flight.price }}$</div>
-                    <div class="flight-info">Time : {{ flight.time }} Aircraft : {{ flight.aircraft }}</div>
-                </div>
-                <div class="flight-date">📅 {{ flight.date }}</div>
-                </li>
-            </ul>
-        </div>
+      <div class="list_of_flights">
+        <ul>
+          <li v-for="flight in filteredFlights" :key="flight.id" class="flight">
+            <div class="flight-details">
+              <div class="flight-info">✈︎ flight number : {{ flight.flightNumber }}</div>
+              <div class="flight-info">Price : {{ flight.price }}$</div>
+              <div class="flight-info">Time : {{ flight.time }} Aircraft : {{ flight.aircraft }}</div>
+            </div>
+            <div class="flight-date">📅 {{ flight.date }}</div>
+          </li>
+        </ul>
+      </div>
     </div>
-</div>
-<router-link class="mainmenu-router__link" to="/">
+  </div>
+  <router-link class="mainmenu-router__link" to="/">
     <button class="back-button">Back</button>
-</router-link>
+  </router-link>
 </template>
-  
+
 <script setup lang="ts">
-  import { ref, computed } from 'vue';
+import {ref, computed, onMounted} from 'vue';
+import axios from 'axios';
 
-  const departurePoint = ref('');
-  const arrivalPoint = ref('');
-  const departureDate = ref('');
-  const shouldSearch = ref(false);
-  const selectedDate = ref('');
-  const flights = ref([
-    {
-      id: 1,
-      flightNumber: '001',
-      price: 100,
-      time: '12:00',
-      aircraft: 'XXXXXXX',
-      date: '2023-12-15'
-    },
-    {
-      id: 2,
-      flightNumber: '002',
-      price: 120,
-      time: '14:30',
-      aircraft: 'XXXXXXX',
-      date: '2023-12-16'
-    },
-    {
-      id: 3,
-      flightNumber: '003',
-      price: 90,
-      time: '08:45',
-      aircraft: 'XXXXXXX',
-      date: '2023-12-16'
-    },
-    {
-      id: 4,
-      flightNumber: '004',
-      price: 110,
-      time: '10:15',
-      aircraft: 'XXXXXXX',
-      date: '2023-12-17'
-    },
+const airports = ref([] as any[]);
+const departureDate = ref('');
+const shouldSearch = ref(false);
+const selectedDate = ref('');
+const flights = ref([] as any[]);
 
-  ]);
+const updateDate = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  departureDate.value = target.value;
+};
 
-  const updateDate = (event: Event) => {
-    const target = event.target as HTMLInputElement;
-    departureDate.value = target.value;
-  };
+const searchFlights = () => {
+  shouldSearch.value = true;
+  if (shouldSearch.value) {
+    selectedDate.value = departureDate.value;
+  }
+};
 
-  const searchFlights = () => {
-    shouldSearch.value = true;
-    if (shouldSearch.value) {
-      selectedDate.value = departureDate.value;
-    }
-  };
-
-  const filteredFlights = computed(() => {
-    return shouldSearch.value && selectedDate.value
+const filteredFlights = computed(() => {
+  return shouldSearch.value && selectedDate.value
       ? flights.value.filter((flight) => flight.date === selectedDate.value)
       : flights.value;
-  });
+});
 
+const fetchFlights = async () => {
+  try {
+    const response = await axios.get('http://localhost:5033/api/Schedule/GetSchedule');
+    flights.value = response.data.data.map((apiFlight: {
+      flightNumber: string;
+      economyPrice: number;
+      time: string;
+      aircraft: string;
+      date: string;
+    }) => ({
+      id: apiFlight.flightNumber,
+      flightNumber: apiFlight.flightNumber,
+      price: apiFlight.economyPrice,
+      time: apiFlight.time,
+      aircraft: apiFlight.aircraft,
+      date: apiFlight.date,
+    }));
+
+    airports.value = response.data.data.map((apiAirports: {
+      fromAirportName: string,
+      toAirportName: string,
+    }) => ({
+      departurePoint: apiAirports.fromAirportName,
+      arrivalPoint: apiAirports.toAirportName,
+    }));
+  } catch
+      (error) {
+    console.error('Failed to load flights:', error);
+  }
+}
+
+onMounted(fetchFlights);
 </script>
-  
-<style scoped>
 
+<style scoped>
 .logo {
-    background-image: url('/src/assets/img/logo_1.png');
-    background-repeat: no-repeat;
-    background-position: center top;
-    width: 100%;
-    min-height: 500px;
-    margin-top: 40px;
+  background-image: url('/src/assets/img/logo_1.png');
+  background-repeat: no-repeat;
+  background-position: center top;
+  width: 100%;
+  min-height: 500px;
+  margin-top: 40px;
 }
 
 .form-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 50%;
-    position: relative;
-    bottom: 350px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50%;
+  position: relative;
+  bottom: 350px;
 }
 
 .form-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 select, input {
-    margin-bottom: 10px;
-    width: 350px;
-    height: 30px;
-    border: none;
-    border-bottom: 1.5px solid black;
-    background-color: white;
+  margin-bottom: 10px;
+  width: 350px;
+  height: 30px;
+  border: none;
+  border-bottom: 1.5px solid black;
+  background-color: white;
 }
 
 .date-input-container {
@@ -171,15 +165,15 @@ select, input {
   display: none;
 }
 
-.search{
-    padding: 10px 100px;
-    font-size: 17px;
-    font-weight: 800;
-    background-color: white;
-    width: 350px;
-    display: inline-block;
-    text-align: center;
-    cursor: pointer;
+.search {
+  padding: 10px 100px;
+  font-size: 17px;
+  font-weight: 800;
+  background-color: white;
+  width: 350px;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
 }
 
 .mainmenu-router__link {
@@ -223,23 +217,24 @@ select, input {
   overflow: hidden;
 }
 
-.list_of_flights li:last-child{
-    border-bottom: none;
+.list_of_flights li:last-child {
+  border-bottom: none;
 }
 
-.flight{
-    font-size: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.flight {
+  font-size: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
+
 .flight-info {
-    margin-bottom: 5px;
+  margin-bottom: 5px;
 }
 
 .flight-date {
-    position: relative;
-    white-space: nowrap;
-    margin-bottom: 60px;
+  position: relative;
+  white-space: nowrap;
+  margin-bottom: 60px;
 }
 </style>
