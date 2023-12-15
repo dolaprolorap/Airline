@@ -98,12 +98,20 @@ function SubmitForm() {
         const accessToken = response.data.data.accessToken;
         const refreshToken = response.data.data.refreshToken;
 
-        localStorage.getItem('')
-
         authStore.SetTokens({accessToken, refreshToken});
         authStore.SetUsername(username.value);
 
-        router.push({path: '/admin'});
+        api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
+
+
+        api.get('/Auth/GetMyself')
+            .then(response => {
+              const role = response.data.data.user.roleName;
+              if (role === 'Administrator')
+                router.push({path: '/admin'});
+              if (role === 'User')
+                router.push({path: '/user'});
+            })
       })
 }
 
