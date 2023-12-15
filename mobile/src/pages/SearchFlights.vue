@@ -2,14 +2,18 @@
   <div class="logo"></div>
   <div class="form-container">
     <div class="form-content">
-      <select>
+      <select v-model="departurePoint">
         <option value="">From</option>
-        <option v-for="airport in airports" :key="airport.departurePoint" :value="airport.departurePoint">{{ airport.departurePoint }}</option>
+        <option v-for="point in uniqueDeparturePoints" :key="point" :value="point">
+          {{ point }}
+        </option>
       </select>
 
-      <select>
+      <select v-model="arrivalPoint">
         <option value="">To</option>
-        <option v-for="airport in airports" :key="airport.arrivalPoint" :value="airport.arrivalPoint">{{ airport.arrivalPoint }}</option>
+        <option v-for="point in uniqueArrivalPoints" :key="point" :value="point">
+          {{ point }}
+        </option>
       </select>
 
       <div class="date-input-container">
@@ -51,6 +55,10 @@ const airports = ref([] as any[]);
 const departureDate = ref('');
 const shouldSearch = ref(false);
 const selectedDate = ref('');
+const selectedDeparture = ref('')
+const departurePoint = ref('')
+const selectedArrival = ref('')
+const arrivalPoint = ref('')
 const flights = ref([] as any[]);
 
 const updateDate = (event: Event) => {
@@ -62,14 +70,37 @@ const searchFlights = () => {
   shouldSearch.value = true;
   if (shouldSearch.value) {
     selectedDate.value = departureDate.value;
+    selectedDeparture.value = departurePoint.value;
+    selectedArrival.value = arrivalPoint.value;
   }
 };
 
 const filteredFlights = computed(() => {
   return shouldSearch.value && selectedDate.value
-      ? flights.value.filter((flight) => flight.date === selectedDate.value)
+      ? flights.value.filter((flight) => {
+        return flight.date === selectedDate.value &&
+            flight.departurePoint === selectedDeparture.value &&
+            flight.arrivalPoint === selectedArrival.value;
+      })
       : flights.value;
 });
+
+const uniqueDeparturePoints = computed(() => {
+  const uniquePoints = new Set<string>();
+  airports.value.forEach((airport) => {
+    uniquePoints.add(airport.departurePoint);
+  });
+  return Array.from(uniquePoints);
+});
+
+const uniqueArrivalPoints = computed(() => {
+  const uniquePoints = new Set<string>();
+  airports.value.forEach((airport) => {
+    uniquePoints.add(airport.arrivalPoint);
+  });
+  return Array.from(uniquePoints);
+});
+
 
 const fetchFlights = async () => {
   try {
@@ -80,6 +111,8 @@ const fetchFlights = async () => {
       time: string;
       aircraft: string;
       date: string;
+      fromAirportName: string;
+      toAirportName: string;
     }) => ({
       id: apiFlight.flightNumber,
       flightNumber: apiFlight.flightNumber,
@@ -87,11 +120,13 @@ const fetchFlights = async () => {
       time: apiFlight.time,
       aircraft: apiFlight.aircraft,
       date: apiFlight.date,
+      departurePoint: apiFlight.fromAirportName,
+      arrivalPoint: apiFlight.toAirportName,
     }));
 
     airports.value = response.data.data.map((apiAirports: {
-      fromAirportName: string,
-      toAirportName: string,
+      fromAirportName: string;
+      toAirportName: string;
     }) => ({
       departurePoint: apiAirports.fromAirportName,
       arrivalPoint: apiAirports.toAirportName,
