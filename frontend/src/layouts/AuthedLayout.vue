@@ -1,3 +1,13 @@
+<script setup lang='ts'>
+import { LocalStorage } from 'quasar';
+
+const exit = () => {
+  LocalStorage.set('accessToken', '');
+  LocalStorage.set('refreshToken', '');
+  LocalStorage.set('email', '')
+};
+</script>
+
 <template>
   <q-layout view='hHh Lpr fFf'> <!-- Be sure to play with the Layout demo on docs -->
     <!-- (Optional) The Header -->
@@ -13,6 +23,7 @@
           color='white'
           text-color='primary'
           icon='logout'
+          to='/'
           @click='exit'
         />
       </q-toolbar>
@@ -26,9 +37,3 @@
   </q-layout>
 </template>
 
-<script setup lang='ts'>
-
-const exit = () => {
-  return;
-};
-</script>
