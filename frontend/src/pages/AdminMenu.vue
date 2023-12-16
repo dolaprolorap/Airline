@@ -1,5 +1,8 @@
 <script setup lang='ts'>
-import { ref } from 'vue';
+import { Ref, ref } from 'vue';
+import { QTableColumn } from 'quasar';
+import { api } from 'boot/axios'
+import { authPost } from 'src/utils';
 
 const office = ref('All offices');
 
@@ -10,9 +13,23 @@ const officeOptions = ref([
   'Doha'
 ]);
 
-const selectedUsers = ref([]);
+interface User {
+  id: number,
+  name: string,
+  lastName: string,
+  age: number,
+  userRole: string,
+  email: string,
+  office: string
+}
 
-const columns = [
+const selectedUsers: Ref<User[]> = ref([]);
+
+const changeRoleDialog = ref(false);
+
+const newRole = ref('');
+
+const columns: QTableColumn[] = [
   {
     name: 'id',
     required: true,
@@ -69,13 +86,13 @@ const columns = [
 
 const visibleColumns = columns.filter(column => column.name !== 'id').map(column => column.name);
 
-const rows = Array(6).fill([
+const rows: User[] = Array(6).fill([
   {
     id: 0,
     name: 'Vasya',
     lastName: 'Huev',
     age: '54',
-    userRole: 'administrator',
+    userRole: 'Administrator',
     email: 'vasyanBoGG@mail.sru',
     office: officeOptions.value[1]
   },
@@ -84,7 +101,7 @@ const rows = Array(6).fill([
     name: 'Iluha',
     lastName: 'Zhopich',
     age: '35',
-    userRole: 'office user',
+    userRole: 'User',
     email: 'gemoroyKolbASS@mail.sru',
     office: officeOptions.value[2]
   },
@@ -93,7 +110,7 @@ const rows = Array(6).fill([
     name: 'Tyoma',
     lastName: 'Super',
     age: '19',
-    userRole: 'administrator',
+    userRole: 'Administrator',
     email: 'coolC0D3R@mail.sru',
     office: officeOptions.value[3]
   }
@@ -106,7 +123,22 @@ const rows = Array(6).fill([
 
 const getSelectedRowsText = (amountOfRows: number) => `${amountOfRows} users selected.`;
 
+const submitChange = () => {
+  if (selectedUsers.value[0].userRole === newRole.value) {
+    return;
+  }
+
+  authPost(
+    '/AdminPanel/ChangeRole',
+    {
+      userEmail: selectedUsers.value[0].email,
+      roleName: newRole
+    });
+  selectedUsers.value[0].userRole = newRole.value;
+}
+
 </script>
+
 <template>
   <q-page class='row items-center justify-center' style=''
   >
@@ -121,6 +153,7 @@ const getSelectedRowsText = (amountOfRows: number) => `${amountOfRows} users sel
           table-header-class='bg-primary'
           :rows='rows'
           :columns='columns'
+          :filter='office === "All offices" ? "" : office'
           row-key='id'
           selection='multiple'
           v-model:selected='selectedUsers'
@@ -144,18 +177,53 @@ const getSelectedRowsText = (amountOfRows: number) => `${amountOfRows} users sel
           </template>
         </q-table>
         <div class='row fit justify-start'>
-          <q-btn class='tex-gyre-adventor-bold col-2' style='font-size: medium' color='primary'>Change role</q-btn>
+          <q-btn
+            class='tex-gyre-adventor-bold col-2'
+            style='font-size: medium'
+            color='primary'
+            :disable='selectedUsers.length !== 1'
+            @click='changeRoleDialog = true; newRole = selectedUsers[0].userRole'
+          >Change role
+          </q-btn>
           <q-btn class='tex-gyre-adventor-bold col-3 offset-1' style='font-size: medium' color='primary'>Enable/Disable
             Login
           </q-btn>
-          <q-btn class='tex-gyre-adventor-bold col-2 offset-4' style='font-size: medium' color='primary'>Add user</q-btn>
+          <q-btn class='tex-gyre-adventor-bold col-2 offset-4' style='font-size: medium' color='primary'>Add user
+          </q-btn>
+        </div>
+        <div>
+          {{ selectedUsers }}
         </div>
       </q-card-section>
     </q-card>
+    <q-dialog v-model='changeRoleDialog'>
+      <q-card style='min-width: 350px'>
+        <q-card-section>
+          <div class='text-h6'>Change role</div>
+        </q-card-section>
+
+        <q-card-section class='q-pt-none'>
+          <q-input dense v-model='selectedUsers[0].email' readonly label='Email' type='email'/>
+          <q-input dense v-model='selectedUsers[0].name' readonly label='Name' />
+          <q-input dense v-model='selectedUsers[0].lastName' readonly label='Last name' />
+          <q-input dense v-model='selectedUsers[0].office' readonly label='Office' />
+          <div class='column q-mt-md'>
+            Role:
+            <q-radio v-model="newRole" val="Administrator" label="Administrator" />
+            <q-radio v-model="newRole" val="User" label="User" />
+          </div>
+        </q-card-section>
+
+        <q-card-actions align='right' class='text-secondary'>
+          <q-btn class='bg-primary text-white tex-gyre-adventor-bold' label='Cancel' v-close-popup />
+          <q-btn class='bg-primary text-white tex-gyre-adventor-bold' label='Submit' v-close-popup @click='submitChange'/>
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
-<style  lang='sass'>
+<style lang='sass'>
 thead tr th
   position: sticky
   z-index: 1
