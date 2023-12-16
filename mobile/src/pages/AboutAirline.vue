@@ -41,12 +41,12 @@ p {
 }
 
 .text-window {
-  height: 60%;
+  height: 50%;
   padding: 5px;
   width: 350px;
   background-color: white;
   position: absolute;
-  bottom: 0;
+  bottom: 100px;
   left: 50%;
   transform: translateX(-50%);
   border: 2px solid black;
@@ -76,5 +76,7 @@ p {
   width: 350px;
   display: block;
   cursor: pointer;
+  position: relative;
+  bottom: 100px;
 }
 </style>

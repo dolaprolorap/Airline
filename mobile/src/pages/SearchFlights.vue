@@ -52,7 +52,7 @@ import {ref, computed, onMounted} from 'vue';
 import axios from 'axios';
 
 const airports = ref([] as any[]);
-const departureDate = ref('');
+const departureDate = ref('2017-12-01');
 const shouldSearch = ref(false);
 const selectedDate = ref('');
 const selectedDeparture = ref('')
@@ -154,7 +154,6 @@ onMounted(fetchFlights);
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 50%;
   position: relative;
   bottom: 350px;
 }
@@ -193,7 +192,6 @@ select, input {
   border: none;
   border-bottom: 1.5px solid black;
   background-color: white;
-
 }
 
 .label-hidden {
@@ -228,10 +226,12 @@ select, input {
   display: block;
   margin: auto;
   cursor: pointer;
+  position: relative;
+  bottom: 80px
 }
 
 .list_of_flights {
-  max-height: 200%;
+  max-height: 160%;
   display: block;
   position: absolute;
   top: 170px;
