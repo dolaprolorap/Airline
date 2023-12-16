@@ -14,13 +14,11 @@ namespace backend.Controllers
     public class AdminPanelController : ControllerBase
     {
         private IUnitOfWork _unit;
-        private ITokenCreatorService _tokenCreatorService;
         private IAuthService _authService;
 
         public AdminPanelController(IUnitOfWork unit, ITokenCreatorService tokenCreator, IAuthService authService) 
         {
             _unit = unit;
-            _tokenCreatorService = tokenCreator;
             _authService = authService;
         }
 
@@ -33,19 +31,33 @@ namespace backend.Controllers
         [HttpGet("Users")]
         public IActionResult GetUsersByOfficeId([FromQuery] int? officeId) 
         {
-            if (officeId == null)
+            bool officeSpecified = officeId == null;
+            IEnumerable<Models.DB.User> users;
+
+            if (officeSpecified)
             {
-                return new GetUsersByOfficeIdResponse(
-                    GetUsersByOfficeIdResponseType.UsersGotten, 
-                    false,
-                    foundUsers: _unit.UserRepo.ReadAll().ToList()).
-                    ConvertToActionResult();
+                users = _unit.UserRepo.ReadAll();
             }
+            else
+            {
+                users = _unit.UserRepo.ReadWhere(user => user.OfficeId == officeId);
+            }
+
             return new GetUsersByOfficeIdResponse(
                 GetUsersByOfficeIdResponseType.UsersGotten,
-                true,
+                officeSpecified,
                 officeId: officeId,
-                foundUsers: _unit.UserRepo.ReadWhere(user => user.OfficeId == officeId).ToList()).
+                foundUsers: users.Select(u => new
+                {
+                    u.Id,
+                    RoleName = _unit.RoleRepo.ReadFirst(r => r.Id == u.RoleId)!.Title,
+                    u.Email,
+                    u.FirstName,
+                    u.LastName,
+                    OfficeName = _unit.OfficeRepo.ReadFirst(o => o.Id == u.OfficeId)!.Title,
+                    u.Birthdate,
+                    u.Active
+                })).
                 ConvertToActionResult();
         }
 

@@ -13,7 +13,7 @@ namespace backend.Services
         IConfiguration _config;
 
         private TimeSpan _accessTokenLifetime = new TimeSpan(0, 5, 0);
-        private TimeSpan _refreshTokenLifetime = new TimeSpan(14, 0, 0 ,0);
+        private TimeSpan _refreshTokenLifetime = new TimeSpan(30, 0, 0 ,0);
 
         public TokenCreatorService(IConfiguration config)
         {
