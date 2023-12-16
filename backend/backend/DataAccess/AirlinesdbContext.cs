@@ -4,7 +4,7 @@ using backend.Models.DB;
 using Microsoft.EntityFrameworkCore;
 using Route = backend.Models.DB.Route;
 
-namespace backend.DataAcсess;
+namespace backend.DataAccess;
 
 public partial class AirlinesdbContext : DbContext
 {

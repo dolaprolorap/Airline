@@ -52,5 +52,16 @@ namespace backend.Controllers
             if (email == null) return Unauthorized();
             return _authService.GetMyself(email).ConvertToActionResult();
         }
+
+        [HttpPost("Exit")]
+        [Authorize] 
+        public IActionResult Exit()
+        {
+            var claimsIdentity = HttpContext.User.Identity as ClaimsIdentity;
+            if (claimsIdentity == null) return Unauthorized();
+            var email = claimsIdentity.Name;
+            if (email == null) return Unauthorized();
+
+        }
     }
 }

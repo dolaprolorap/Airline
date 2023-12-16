@@ -1,5 +1,5 @@
 using backend.DataAccess.Repository;
-using backend.DataAcñess;
+using backend.DataAccess;
 using backend.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
