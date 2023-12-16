@@ -62,6 +62,7 @@ namespace backend.Controllers
             var email = claimsIdentity.Name;
             if (email == null) return Unauthorized();
 
+            return Ok();
         }
     }
 }
