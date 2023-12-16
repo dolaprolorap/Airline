@@ -1,4 +1,4 @@
-﻿namespace backend.ServerResponse.TrackerService
+﻿namespace backend.ServerResponse.Services.TrackerService
 {
     public enum TrackerResponseType
     {
@@ -10,8 +10,10 @@
 
     public class TrackerResponse : StatusResponse
     {
-        public TrackerResponse (TrackerResponseType type)
+        public TrackerResponse(TrackerResponseType type)
         {
+            UserMsg = type.ToString();
+
             switch (type)
             {
                 case TrackerResponseType.UserNotFound:

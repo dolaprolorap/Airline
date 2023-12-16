@@ -14,6 +14,7 @@ namespace backend.ServerResponse
     public class StatusResponse
     {
         public static bool ShowAllLogs { get; set; } = true;
+        public static bool HideInternalErrorResponse { get; set; } = true;
 
         public StatusResponseType Status { get; protected set; }
         public string UserMsg { get; protected set; } = "";
@@ -84,9 +85,18 @@ namespace backend.ServerResponse
                         Data
                     });
                 case StatusResponseType.UserFail:
-                    return new BadRequestObjectResult((object?)null);
+                    return new BadRequestObjectResult(new
+                    {
+                        Msg = UserMsg,
+                        Data
+                    });
                 case StatusResponseType.ServerFail:
-                    return new ObjectResult(null)
+                    var value = new
+                    {
+                        Msg = HideInternalErrorResponse ? "InternalServerError" : UserMsg,
+                        Data = HideInternalErrorResponse ? null : Data
+                    };
+                    return new ObjectResult(value)
                     {
                         StatusCode = 500
                     };

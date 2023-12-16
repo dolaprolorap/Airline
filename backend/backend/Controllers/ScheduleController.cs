@@ -2,7 +2,7 @@
 using backend.Models.API;
 using backend.DataAccess.Repository;
 using backend.ServerResponse;
-using backend.ServerResponse.AuthService;
+using backend.ServerResponse.Services.AuthService;
 using Microsoft.EntityFrameworkCore;
 using backend.Models.DB;
 using backend.Services;
@@ -46,11 +46,22 @@ namespace backend.Controllers
         [HttpPost("EditFlightsByCsv")]
         public IActionResult EditFlightsByCsv()
         {
-            var csvFile = HttpContext.Request.Form.Files.First();
+            IFormFile? csvFile;
+
+            try
+            {
+                csvFile = HttpContext.Request.Form.Files.First();
+            }
+            catch (Exception ex)
+            {
+                return new StatusResponse(StatusResponseType.UserFail,
+                    "NoFile",
+                    ex.Message).ConvertToActionResult();
+            }
 
             if (csvFile == null)
                 return new StatusResponse(StatusResponseType.UserFail, 
-                    "There is no file", 
+                    "NoFile", 
                     "There is no file").ConvertToActionResult();
 
             TextReader textReader = new StreamReader(csvFile.OpenReadStream());

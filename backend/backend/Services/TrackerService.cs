@@ -1,7 +1,7 @@
 ﻿using backend.DataAccess.Repository;
 using backend.Models.API;
 using backend.ServerResponse;
-using backend.ServerResponse.TrackerService;
+using backend.ServerResponse.Services.TrackerService;
 using Microsoft.EntityFrameworkCore;
 using Tracker = backend.Models.DB.Trackerrecord;
 
@@ -83,14 +83,25 @@ namespace backend.Services
 
         public StatusResponse GetByEmail(string email) 
         { 
-            _unit.UserRepo.ReadWhere(u => u.Email == email).Load();
+            var queryableUser = _unit.UserRepo.ReadWhere(u => u.Email == email);
+            if (!queryableUser.Any())
+            {
+                return new GetByEmailResponse(
+                    GetByEmailResponseType.UserNotFound, 
+                    email);
+            }
+
+            queryableUser.Load();
 
             _unit.WarntypeRepo.ReadWhere(wt => true).Load();
             _unit.TrackerrecordtypeRepo.ReadWhere(wt => true).Load();
 
             var qRecords = _unit.TrackerrecordRepo.ReadWhere(t => t.User!.Email == email).ToList().Select((t, i) => new TrackerRecord(t));
 
-            return new StatusResponse(StatusResponseType.Success, "", "", qRecords);
+            return new GetByEmailResponse(
+                GetByEmailResponseType.RecordsGotten, 
+                email, 
+                qRecords);
         }
     }
 }

@@ -16,7 +16,7 @@ namespace backend.Custom
         public RouteConstructorResponse ConstructPath(
             int fromAirportId, 
             int toAirportId, 
-            out IEnumerable<IEnumerable<Route>>? path) 
+            out List<List<Route>>? path) 
         {
             var allRoutes = _unit.RouteRepo.ReadAll();
 
@@ -40,36 +40,35 @@ namespace backend.Custom
             }
 
             path = new List<List<Route>>();
+            var prev = new List<Route>();
 
-            _dfs(allRoutes, fromAirportId, toAirportId, new List<Route>(), path);
+            _dfs(allRoutes.ToList(), fromAirportId, toAirportId, prev, path);
 
             return new RouteConstructorResponse(RouteConstructorResponseType.Ok);
         }
 
         private void _dfs(
-            IEnumerable<Route> allRoutes, 
+            List<Route> allRoutes, 
             int currentRouteId, 
             int finishId, 
-            IEnumerable<Route> prevRoutes, 
-            IEnumerable<IEnumerable<Route>> foundRoutes)
+            List<Route> prevRoutes, 
+            List<List<Route>> foundRoutes)
         {
             var init = allRoutes.Where(r => r.DepartureAirportId == currentRouteId);
             foreach (var ri in init)
             {
-                if (prevRoutes.Contains(ri)) continue;
+                if (prevRoutes.Where(
+                    r => r.ArrivalAirportId == ri.ArrivalAirportId ||
+                    r.DepartureAirportId == ri.ArrivalAirportId).Any()) continue;
 
                 if (ri.ArrivalAirportId == finishId)
                 {
-                    var foundRoute = new List<Route>(prevRoutes);
-                    foundRoute.Append(ri);
-                    foundRoutes.Append(foundRoute);
+                    var foundRoute = new List<Route>(prevRoutes) { ri };
+                    foundRoutes.Add(foundRoute);
                 }
                 else
                 {
-                    var newPrevRoutes = new List<Route>(prevRoutes)
-                    {
-                        ri
-                    };
+                    var newPrevRoutes = new List<Route>(prevRoutes) { ri };
                     _dfs(allRoutes, ri.ArrivalAirportId, finishId, newPrevRoutes, foundRoutes);
                 }
             }

@@ -1,7 +1,7 @@
 ﻿using backend.Models.API;
 using Microsoft.AspNetCore.Mvc;
 using backend.ServerResponse;
-using backend.ServerResponse.AuthService;
+using backend.ServerResponse.Services.AuthService;
 
 namespace backend.Services
 {

@@ -2,7 +2,7 @@
 {
     public class ChangeRoleModel
     {
-        public int Id { get; set; }
-        public int RoleId { get; set; }
+        public string UserEmail { get; set; }
+        public string RoleName { get; set; }
     }
 }

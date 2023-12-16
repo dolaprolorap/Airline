@@ -2,132 +2,90 @@
 using backend.DataAccess.Repository;
 using backend.Models.API;
 using Microsoft.AspNetCore.Mvc;
-using backend.ServerResponse.BookController;
 using Route = backend.Models.DB.Route;
 using Microsoft.EntityFrameworkCore;
+using backend.Models.DB;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
+using BookRequest = backend.ServerRequest.Custom.BookingManager.BookRequest;
+using backend.ServerResponse.Controllers.BookController;
 
 namespace backend.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class BookController : ControllerBase
     {
         private IUnitOfWork _unit;
+        private BookingManager _bookingManager;
 
         public BookController(IUnitOfWork unit) 
         { 
             _unit = unit;
+            _bookingManager = new BookingManager(_unit);
         }
 
         [HttpPost("SearchFlights")]
         public IActionResult SearchFlights([FromBody] SearchFlightModel searchFlight)
         {
-            var routeConstructor = new RouteConstructor(_unit);
-            return Ok();
-            var fromAirport = _unit.AirportRepo.ReadFirst(airport => airport.Iatacode == searchFlight.FromCode);
-            var toAirport = _unit.AirportRepo.ReadFirst(airport => airport.Iatacode == searchFlight.ToCode);
+            var forwardFlightsStatus = _bookingManager.CreateManyFlights(searchFlight);
 
-            if (fromAirport == null)
-            {
+            if (forwardFlightsStatus.ResponseType !=
+                ServerResponse.Custom.BookManager.CreateManyFlightsResponseType.Ok)
                 return new SearchFlightsResponse(
-                    SearchFlightsResponseType.FromAirportCodeInvalid,
-                    fromCode: searchFlight.FromCode).
+                    SearchFlightsResponseType.FailedCreateManyFlights).
                     ConvertToActionResult();
-            }
 
-            if (toAirport == null)
+            if (searchFlight.WithReturn)
             {
-                return new SearchFlightsResponse(
-                    SearchFlightsResponseType.ToAirportCodeInvalid,
-                    toCode: searchFlight.ToCode).
-                    ConvertToActionResult();
-            }
-
-            IEnumerable<IEnumerable<Route>>? paths = new List<List<Route>>();
-            var constructorResponse = routeConstructor.ConstructPath(
-                fromAirport.Id,
-                toAirport.Id,
-                out paths);
-
-            IEnumerable<ManyFlightsData> manyFlights = new List<ManyFlightsData>();
-
-            //_unit.RouteRepo.ReadWhere(r => true).Load();
-
-            foreach (var path in paths)
-            {
-                DateOnly lastDate;
-                ManyFlightsData manyFlightsData = new ManyFlightsData();
-
-                foreach (var (route, i) in path.Select((value, i) => (value, i)))
+                var returnSearchFlight = new SearchFlightModel()
                 {
-                    if (i == 0)
-                    {
-                        if (!DateOnly.TryParseExact(searchFlight.OutboundDate, "dd-MM-yyyy", out lastDate))
-                        {
-                            return new SearchFlightsResponse(
-                                SearchFlightsResponseType.FromDateInvalid,
-                                searchFlight.OutboundDate).
-                                ConvertToActionResult();
-                        }
+                    FromCode = searchFlight.ToCode,
+                    ToCode = searchFlight.FromCode,
+                    CabinType = searchFlight.CabinType,
+                    WithReturn = false,
+                    OutboundDate = searchFlight.ReturnDate,
+                    ReturnDate = searchFlight.ReturnDate
+                };
 
-                        var schedule = _unit.ScheduleRepo.ReadFirst(
-                            s => s.Date == lastDate &&
-                            s.RouteId == route.Id);
-                        
-                        if (schedule == null)
-                        {
-                            break;
-                        }
+                var returnFlightsStatus = _bookingManager.CreateManyFlights(returnSearchFlight);
 
-                        FlightData flightData = new FlightData()
-                        {
-                            FromCode = schedule.Route.DepartureAirport.Iatacode,
-                            ToCode = schedule.Route.ArrivalAirport.Iatacode,
-                            Date = schedule.Date.ToString(),
-                            Time = schedule.Time.ToString(),
-                            FlightNumber = schedule.FlightNumber!,
-                            EconomyPrice = (int)schedule.EconomyPrice,
-                        };
-                        manyFlightsData.Flights.Add(flightData);
-                    }
-                    else
-                    {
-                        if (!DateOnly.TryParseExact(searchFlight.OutboundDate, "dd-MM-yyyy", out lastDate))
-                        {
-                            return new SearchFlightsResponse(
-                                SearchFlightsResponseType.FromDateInvalid,
-                                searchFlight.OutboundDate).
-                                ConvertToActionResult();
-                        }
+                if (returnFlightsStatus.ResponseType !=
+                    ServerResponse.Custom.BookManager.CreateManyFlightsResponseType.Ok)
+                    return new SearchFlightsResponse(
+                        SearchFlightsResponseType.FailedCreateManyFlights).
+                        ConvertToActionResult();
 
-                        var schedule = _unit.ScheduleRepo.ReadFirst(
-                            s => s.Date == lastDate &&
-                            s.RouteId == route.Id);
-
-                        if (schedule == null)
-                        {
-                            break;
-                        }
-
-                        FlightData flightData = new FlightData()
-                        {
-                            FromCode = schedule.Route.DepartureAirport.Iatacode,
-                            ToCode = schedule.Route.ArrivalAirport.Iatacode,
-                            Date = schedule.Date.ToString(),
-                            Time = schedule.Time.ToString(),
-                            FlightNumber = schedule.FlightNumber!,
-                            EconomyPrice = (int)schedule.EconomyPrice,
-                        };
-                        manyFlightsData.Flights.Add(flightData);
-                    }
-                }
+                return new SearchFlightsResponse(
+                    SearchFlightsResponseType.Ok,
+                    forwardManyFlights: forwardFlightsStatus.ManyFlights,
+                    returnManyFlights: returnFlightsStatus.ManyFlights).
+                    ConvertToActionResult();
             }
+
+            return new SearchFlightsResponse(
+                SearchFlightsResponseType.Ok,
+                forwardManyFlights: forwardFlightsStatus.ManyFlights).
+                ConvertToActionResult();
         }
 
         [HttpPost("Book")]
-        public IActionResult Book([FromBody] BookModel book)
+        public IActionResult Book([FromBody] BookData book)
         {
-            return Ok();
+            var claimsIdentity = HttpContext.User.Identity as ClaimsIdentity;
+            if (claimsIdentity == null) return Unauthorized();
+            var email = claimsIdentity.Name;
+            if (email == null) return Unauthorized();
+
+            var user = _unit.UserRepo.ReadFirst(u => u.Email == email);
+            if (user == null) return Unauthorized();
+
+            return _bookingManager.Book(new BookRequest
+            {
+                UserId = user.Id,
+                BookData = book
+            }).ConvertToActionResult();
         }
     }
 }

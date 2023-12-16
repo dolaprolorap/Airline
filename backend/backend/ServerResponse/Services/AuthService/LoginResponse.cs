@@ -1,4 +1,4 @@
-﻿namespace backend.ServerResponse.AuthService
+﻿namespace backend.ServerResponse.Services.AuthService
 {
     public enum LoginResponseType
     {
@@ -20,14 +20,14 @@
                     UserMsg = "UserNotFound";
                     break;
                 case LoginResponseType.InvalidPassword:
-                    Status = StatusResponseType.UserFail;
+                    Status = StatusResponseType.Success;
                     LoggerMsg = string.Format("Invalid password '{0}' for user '{1}'", password, userEmail);
                     UserMsg = "InvalidPwd";
                     break;
                 case LoginResponseType.TokensNotUpdated:
                     Status = StatusResponseType.ServerFail;
                     LoggerMsg = string.Format("Fail on update token after login with email '{0}'", userEmail);
-                    UserMsg = "Interal server error";
+                    UserMsg = "InternalServerError";
                     break;
                 case LoginResponseType.Ok:
                     Status = StatusResponseType.Success;

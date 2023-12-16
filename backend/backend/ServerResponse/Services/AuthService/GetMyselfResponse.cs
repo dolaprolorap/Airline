@@ -1,7 +1,7 @@
 ﻿using User = backend.Models.DB.User;
 using UserData = backend.Models.API.UserData;
 
-namespace backend.ServerResponse.AuthService
+namespace backend.ServerResponse.Services.AuthService
 {
     public enum GetMyselfResponseType
     {
@@ -17,8 +17,8 @@ namespace backend.ServerResponse.AuthService
 
         public GetMyselfResponse(
             GetMyselfResponseType type,
-            string? email = null, 
-            UserData? userData = null) 
+            string? email = null,
+            UserData? userData = null)
         {
             ResponseType = type;
             UserData = userData;

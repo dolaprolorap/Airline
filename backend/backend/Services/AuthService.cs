@@ -3,7 +3,7 @@ using backend.DataAccess.Repository;
 using backend.Models.API;
 using backend.Models.DB;
 using backend.ServerResponse;
-using backend.ServerResponse.AuthService;
+using backend.ServerResponse.Services.AuthService;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;

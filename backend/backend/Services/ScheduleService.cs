@@ -30,7 +30,7 @@ namespace backend.Services
                 if (fromAirport == null)
                 {
                     return new StatusResponse(StatusResponseType.UserFail,
-                        "There is no From Airport with that name: " + scheduleFilter.FromAirportName,
+                        "FromAirportNotFound",
                         "There is no From Airport with that name: " + scheduleFilter.FromAirportName);
                 }
             }
@@ -42,7 +42,7 @@ namespace backend.Services
                 if (toAirport == null)
                 {
                     return new StatusResponse(StatusResponseType.UserFail,
-                        "There is no To Airport with that name: " + scheduleFilter.ToAirportName,
+                        "ToAirportNotFound",
                         "There is no To Airport with that name: " + scheduleFilter.ToAirportName);
                 }
             }
@@ -54,7 +54,7 @@ namespace backend.Services
             );
             if (!routes.Any())
             {
-                return new StatusResponse(StatusResponseType.Success, "", "", new List<ScheduleRecord>());
+                return new StatusResponse(StatusResponseType.Success, "RoutesFound", "", new List<ScheduleRecord>());
             }
             routes.Load();
             var routesIds = routes.Select(route => route.Id).ToList();
@@ -70,7 +70,7 @@ namespace backend.Services
                 catch (FormatException)
                 {
                     return new StatusResponse(StatusResponseType.UserFail,
-                        "Invalid DateOnly: " + scheduleFilter.Outbound,
+                        "InvalidDate",
                         "Invalid DateOnly: " + scheduleFilter.Outbound);
                 }
             }
@@ -78,7 +78,8 @@ namespace backend.Services
             var flights = _unit.ScheduleRepo.ReadWhere(
                 flight =>
                 (outbound == null || flight.Date == outbound) &&
-                routesIds.Contains(flight.Id)
+                (scheduleFilter.FlightNumber == null || flight.FlightNumber == scheduleFilter.FlightNumber) &&
+                routesIds.Contains(flight.RouteId)
             );
 
             _unit.AirportRepo.ReadWhere(a => true).Load();
@@ -100,15 +101,16 @@ namespace backend.Services
                 });
             }
 
-            return new StatusResponse(StatusResponseType.Success, "", "", scheduleRecords);
+            return new StatusResponse(StatusResponseType.Success, "RoutesFound", "", scheduleRecords);
         }
 
         public StatusResponse SetActiveFlight(SetActiveFlight setActiveFlight)
         {
             var flight = _unit.ScheduleRepo.ReadFirst(s => s.FlightNumber == setActiveFlight.FlightNumber.ToString());
             if (flight == null)
-                return new StatusResponse(StatusResponseType.UserFail,
-                    "There is no schedule with that flight number: " + setActiveFlight.FlightNumber,
+                return new StatusResponse(
+                    StatusResponseType.UserFail,
+                    "ScheduleNotFound",
                     "There is no schedule with that flight number: " + setActiveFlight.FlightNumber);
 
             flight.Confirmed = setActiveFlight.ActiveState;
@@ -116,7 +118,11 @@ namespace backend.Services
             _unit.ScheduleRepo.Update(flight);
             _unit.Save();
 
-            return new StatusResponse(StatusResponseType.Success);
+            return new StatusResponse(
+                StatusResponseType.Success, 
+                "ScheduleActiveStateChanged",
+                "Schedule active state changed"
+                );
         }
 
         public StatusResponse EditFlight(EditFlight editFlight)
@@ -124,24 +130,26 @@ namespace backend.Services
             var flight = _unit.ScheduleRepo.ReadFirst(s => s.FlightNumber == editFlight.FlightNumber.ToString());
             if (flight == null)
             {
-                return new StatusResponse(StatusResponseType.UserFail,
-                    "There is no flight with flight number: " + editFlight.FlightNumber,
+                return new StatusResponse(
+                    StatusResponseType.UserFail,
+                    "ScheduleNotFound",
                     "There is no flight with flight number: " + editFlight.FlightNumber);
             }
 
             if (!DateOnly.TryParseExact(editFlight.Date, "yyyy-MM-dd", out DateOnly date))
             {
-                DateOnly.Parse(editFlight.Date);
-                return new StatusResponse(StatusResponseType.UserFail,
-                    "Invalid DateOnly string: " + editFlight.Date,
+                return new StatusResponse(
+                    StatusResponseType.UserFail,
+                    "InvalidDate",
                     "Invalid DateOnly string: " + editFlight.Date);
             }
 
             if (!TimeOnly.TryParseExact(editFlight.Time, "HH:mm", out TimeOnly time))
             {
-                return new StatusResponse(StatusResponseType.UserFail,
-                    "Invalid DateOnly string: " + editFlight.Date,
-                    "Invalid DateOnly string: " + editFlight.Date);
+                return new StatusResponse(
+                    StatusResponseType.UserFail,
+                    "InvalidTime",
+                    "Invalid TimeOnly string: " + editFlight.Date);
             }
 
             flight.Date = date;
@@ -151,7 +159,10 @@ namespace backend.Services
             _unit.ScheduleRepo.Update(flight);
             _unit.Save();
 
-            return new StatusResponse(StatusResponseType.Success);
+            return new StatusResponse(
+                StatusResponseType.Success,
+                "ScheduleEdited",
+                "Schedule data edited");
         }
 
         public StatusResponse EditFlightsByCsv(string csv)
@@ -193,7 +204,7 @@ namespace backend.Services
                 }
             }
 
-            return new StatusResponse(StatusResponseType.Success, "", "", new
+            return new StatusResponse(StatusResponseType.Success, "FlightsEdited", "", new
             {
                 Success = successUpdates,
                 Duplicates = duplicates,
