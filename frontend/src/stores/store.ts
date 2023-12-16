@@ -8,6 +8,7 @@ export const useAuthStore = defineStore({
         refreshToken: null as string | null,
         isAuthenticated: false,
         username: null as string | null
+
     }),
     actions: ({
         SetTokens({accessToken, refreshToken}: { accessToken: string; refreshToken: string }) {
