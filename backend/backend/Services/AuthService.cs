@@ -187,5 +187,37 @@ namespace backend.Services
                 email: email,
                 userData: status.User);
         }
+
+        public ExitResponse Exit(string email)
+        {
+            var user = _unit.UserRepo.ReadFirst(u => u.Email == email);
+            if (user == null)
+            {
+                return new ExitResponse(
+                    ExitResponseType.UserNotFound, 
+                    email: email);
+            }
+
+            var token = _unit.TokenRepo.ReadFirst(t => t.UserId == user.Id);
+            if (token == null)
+            {
+                return new ExitResponse(
+                    ExitResponseType.TokenNotFound, 
+                    email: email);
+            }
+
+            token.AccessToken = "";
+            token.RefreshToken = "";
+            token.RefreshTokenExpireDate = null;
+
+            _unit.TokenRepo.Update(token);
+            _unit.Save();
+
+            _tracker.SuccessLogout(email);
+
+            return new ExitResponse(
+                ExitResponseType.Exited, 
+                email: email);
+        }
     }
 }

@@ -11,5 +11,6 @@ namespace backend.Services
         public StatusResponse Refresh(TokenPair tokenPair);
         public StatusResponse Register(RegisterUser registerUser);
         public GetMyselfResponse GetMyself(string email);
+        public ExitResponse Exit(string email);
     }
 }

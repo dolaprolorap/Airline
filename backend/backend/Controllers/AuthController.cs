@@ -1,9 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using backend.Models.API;
-using backend.DataAccess.Repository;
-using Microsoft.AspNetCore.Identity;
-using User = backend.Models.DB.User;
-using Token = backend.Models.DB.Token;
 using backend.Services;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
@@ -62,7 +58,7 @@ namespace backend.Controllers
             var email = claimsIdentity.Name;
             if (email == null) return Unauthorized();
 
-            return Ok();
+            return _authService.Exit(email).ConvertToActionResult();
         }
     }
 }
