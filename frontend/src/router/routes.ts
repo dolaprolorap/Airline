@@ -22,6 +22,10 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'user',
         component: () => import('pages/UserPage.vue')
+      },
+      {
+        path: 'flightmanager',
+        component: () => import('pages/FlightEditor.vue')
       }
     ]
   },
