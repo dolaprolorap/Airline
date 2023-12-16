@@ -1,7 +1,7 @@
 <template>
   <div class="main">
     <div class="ticket-container">
-      Ticket number:&emsp;
+      Ticket number:
       <input
           type="text"
           v-model="passengerClass"
@@ -73,38 +73,38 @@ const seatImage = ref();
 
 const seatConfig = {
   firstClass: [
-    { row: '1', column: '1', top: '58.1%', left: '16.5%', label: 'A' },
-    { row: '2', column: '1', top: '65.5%', left: '16.4%', label: 'A' },
-    { row: '3', column: '1', top: '73.2%', left: '16.5%', label: 'A' },
+    { row: '1', column: '1', top: '55.6%', left: '24.5%', label: 'A' },
+    { row: '2', column: '1', top: '63.6%', left: '24.4%', label: 'A' },
+    { row: '3', column: '1', top: '71.8%', left: '24.5%', label: 'A' },
 
-    { row: '1', column: '2', top: '58.1%', left: '49.3%', label: 'C' },
-    { row: '2', column: '2', top: '65.5%', left: '49%', label: 'C' },
-    { row: '3', column: '2', top: '73.2%', left: '49.3%', label: 'C' },
+    { row: '1', column: '2', top: '55.6%', left: '57.3%', label: 'C' },
+    { row: '2', column: '2', top: '63.6%', left: '57%', label: 'C' },
+    { row: '3', column: '2', top: '71.8%', left: '57.3%', label: 'C' },
 
-    { row: '1', column: '3', top: '58.1%', left: '62%', label: 'D' },
-    { row: '2', column: '3', top: '65.5%', left: '61.8%', label: 'D' },
-    { row: '3', column: '3', top: '73.2%', left: '62%', label: 'D' },
+    { row: '1', column: '3', top: '55.6%', left: '70%', label: 'D' },
+    { row: '2', column: '3', top: '63.6%', left: '69.8%', label: 'D' },
+    { row: '3', column: '3', top: '71.8%', left: '70%', label: 'D' },
   ],
   businessClass: [
-    { row: '1', column: '1', top: '51.5%', left: '12.8%', label: 'A' },
-    { row: '2', column: '1', top: '59.2%', left: '12.8%', label: 'A' },
-    { row: '3', column: '1', top: '67.3%', left: '12.8%', label: 'A' },
-    { row: '4', column: '1', top: '75.4%', left: '12.8%', label: 'A' },
+    { row: '1', column: '1', top: '48.7%', left: '20.8%', label: 'A' },
+    { row: '2', column: '1', top: '56.8%', left: '20.8%', label: 'A' },
+    { row: '3', column: '1', top: '65.3%', left: '20.8%', label: 'A' },
+    { row: '4', column: '1', top: '73.9%', left: '20.8%', label: 'A' },
 
-    { row: '1', column: '2', top: '51.5%', left: '25.5%', label: 'B' },
-    { row: '2', column: '2', top: '59.2%', left: '25.5%', label: 'B' },
-    { row: '3', column: '2', top: '67.3%', left: '25.5%', label: 'B' },
-    { row: '4', column: '2', top: '75.4%', left: '25.5%', label: 'B' },
+    { row: '1', column: '2', top: '48.7%', left: '33.5%', label: 'B' },
+    { row: '2', column: '2', top: '56.8%', left: '33.5%', label: 'B' },
+    { row: '3', column: '2', top: '65.3%', left: '33.5%', label: 'B' },
+    { row: '4', column: '2', top: '73.9%', left: '33.5%', label: 'B' },
 
-    { row: '1', column: '3', top: '51.5%', left: '48.3%', label: 'C' },
-    { row: '2', column: '3', top: '59.2%', left: '48.3%', label: 'C' },
-    { row: '3', column: '3', top: '67.3%', left: '48.3%', label: 'C' },
-    { row: '4', column: '3', top: '75.4%', left: '48.3%', label: 'C' },
+    { row: '1', column: '3', top: '48.7%', left: '56.3%', label: 'C' },
+    { row: '2', column: '3', top: '56.8%', left: '56.3%', label: 'C' },
+    { row: '3', column: '3', top: '65.3%', left: '56.3%', label: 'C' },
+    { row: '4', column: '3', top: '73.9%', left: '56.3%', label: 'C' },
 
-    { row: '1', column: '4', top: '51.5%', left: '61%', label: 'D' },
-    { row: '2', column: '4', top: '59.2%', left: '61%', label: 'D' },
-    { row: '3', column: '4', top: '67.3%', left: '61%', label: 'D' },
-    { row: '4', column: '4', top: '75.4%', left: '61%', label: 'D' },
+    { row: '1', column: '4', top: '48.7%', left: '69%', label: 'D' },
+    { row: '2', column: '4', top: '56.8%', left: '69%', label: 'D' },
+    { row: '3', column: '4', top: '65.3%', left: '69%', label: 'D' },
+    { row: '4', column: '4', top: '73.9%', left: '69%', label: 'D' },
   ],
 };
 
@@ -203,9 +203,9 @@ const reserveSeatFirst = (row: string, seat: string) => {
   background-color: white;
   display: block;
   cursor: pointer;
-  width: 200px;
-  right: 50%;
+  width: 150px;
   transform: translateX(60%);
+  margin-left: 15px;
 }
 
 .reserve-seat__button {
@@ -214,10 +214,11 @@ const reserveSeatFirst = (row: string, seat: string) => {
   font-size: 17px;
   font-weight: 800;
   cursor: pointer;
-  width: 200px;
+  width: 150px;
   position: absolute;
   left: 50%;
   transform: translateX(-110%);
+  background-color: white;
 }
 
 .reserve-button__first {
@@ -236,6 +237,7 @@ const reserveSeatFirst = (row: string, seat: string) => {
 
 .message {
   font-weight: 900;
+  position: relative;
 }
 
 .button-container {
@@ -244,6 +246,7 @@ const reserveSeatFirst = (row: string, seat: string) => {
   align-items: center;
   width: 99%;
   position: absolute;
+  bottom: 20px;
   z-index: 1000;
 }
 
@@ -262,7 +265,8 @@ const reserveSeatFirst = (row: string, seat: string) => {
 }
 
 .plane_img_fc {
-  margin-top: 50px;
   margin-bottom: 120px;
+  margin-top: 5px;
+  margin-left: 8%;
 }
 </style>

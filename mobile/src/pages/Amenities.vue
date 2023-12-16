@@ -18,24 +18,24 @@
 </template>
   
 <script setup lang="ts">
-  import { ref } from 'vue';
-  
-  const initialList = [
-    { service: 'Extra Blanket', cost: 10 },
-    { service: 'Next Seat Free', cost: 30 },
-    { service: 'Two Neighboring Seats Free', cost: 50 },
-    { service: 'Tablet Rental', cost: 12 },
-    { service: 'Laptop Rental', cost: 15 },
-    { service: 'Lounge Access', cost: 25 },
-    { service: 'Soft Drinks', cost: 0 },
-    { service: 'Premium Headphones Rental', cost: 5 },
-    { service: 'Extra Bag', cost: 15 },
-    { service: 'Fast Checkin Lane', cost: 10 },
-    { service: 'Wi-Fi 50 mb', cost: 0 },
-    { service: 'Wi-Fi 250 mb', cost: 25 },
-  ];
-  
-  const itemList = ref(initialList);
+import { ref } from 'vue';
+
+const initialList = [
+  { service: 'Extra Blanket', cost: 10 },
+  { service: 'Next Seat Free', cost: 30 },
+  { service: 'Two Neighboring Seats Free', cost: 50 },
+  { service: 'Tablet Rental', cost: 12 },
+  { service: 'Laptop Rental', cost: 15 },
+  { service: 'Lounge Access', cost: 25 },
+  { service: 'Soft Drinks', cost: 0 },
+  { service: 'Premium Headphones Rental', cost: 5 },
+  { service: 'Extra Bag', cost: 15 },
+  { service: 'Fast Checkin Lane', cost: 10 },
+  { service: 'Wi-Fi 50 mb', cost: 0 },
+  { service: 'Wi-Fi 250 mb', cost: 25 },
+];
+
+const itemList = ref(initialList);
 </script>
 
 <style scoped>
@@ -55,11 +55,11 @@
 }
 
 .text-window {
-  height: 70%;
+  height: 60%;
   padding: 5px;
   background-color: white;
   position: absolute;
-  bottom: 0;
+  bottom: 100px;
   width: 350px;
   left: 50%;
   transform: translateX(-50%);
@@ -109,6 +109,8 @@
   width: 350px;
   display: block;
   cursor: pointer;
+  position: relative;
+  bottom: 100px;
 }
 
 .service{
