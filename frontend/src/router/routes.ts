@@ -17,11 +17,15 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: 'admin',
-        component: () => import('pages/AdminMenu.vue')
+        component: () => import('pages/AdminMenu.vue'),
       },
       {
         path: 'user',
         component: () => import('pages/UserPage.vue')
+      },
+      {
+        path: 'flightmanager',
+        component: () => import('pages/FlightEditor.vue')
       }
     ]
   },

@@ -4,6 +4,7 @@
       <q-btn flat color="primary" label="Flat"/>
     </q-toolbar>
   </div>
+  <p>HUI</p>
 </template>
 
 <script setup lang="ts">
