@@ -1,17 +1,13 @@
 <script setup lang='ts'>
-import { LocalStorage } from 'quasar';
+import { exit } from 'src/utils';
 
-const exit = () => {
-  LocalStorage.set('accessToken', '');
-  LocalStorage.set('refreshToken', '');
-  LocalStorage.set('email', '')
-};
+
 </script>
 
 <template>
   <q-layout view='hHh Lpr fFf'> <!-- Be sure to play with the Layout demo on docs -->
     <!-- (Optional) The Header -->
-    <q-header elevated >
+    <q-header elevated>
       <q-toolbar>
         <q-toolbar-title>
           <q-btn flat to='/'>

@@ -4,34 +4,36 @@ import { LocalStorage } from 'quasar';
 
 import { Router } from 'src/router';
 
+export const exit = () => {
+  LocalStorage.remove('accessToken');
+  LocalStorage.remove('refreshToken');
+  LocalStorage.remove('email');
+
+  Router.push('/');
+};
+
 export const getNewTokens = async () => {
   if (!LocalStorage.has('accessToken') || !LocalStorage.has('refreshToken')) {
-
-    LocalStorage.set('accessToken', '');
-    LocalStorage.set('refreshToken', '');
-
-    await Router.push('/');
+    exit();
 
     throw Error('Not authorized');
   }
-
   return api
     .post('/Auth/Refresh', {
       accessToken: LocalStorage.getItem('accessToken'),
       refreshToken: LocalStorage.getItem('refreshToken')
     })
     .then(response => {
-      if (response.status !== 200) {
-        LocalStorage.set('accessToken', '');
-        LocalStorage.set('refreshToken', '');
-        Router.push('/').then(() => {
-          throw Error('Not authorized');
-        });
-      }
       const data = response.data;
 
       LocalStorage.set('accessToken', data.data.accessToken);
       LocalStorage.set('refreshToken', data.data.refreshToken);
+    })
+    .catch((error) => {
+      if (error.response.status !== 200) {
+        exit();
+        throw Error('Not authorized');
+      }
     });
 };
 export const authPost = async (url: string, data: object) => {
