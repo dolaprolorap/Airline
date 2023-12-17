@@ -53,6 +53,7 @@ namespace backend.Custom
 
             foreach (var path in paths)
             {
+                bool skipManyFlights = false;
                 ManyFlightsData manyFlightsData = new ManyFlightsData();
 
                 if (!DateOnly.TryParseExact(searchFlight.OutboundDate, "yyyy-MM-dd", out DateOnly lastDate))
@@ -79,22 +80,27 @@ namespace backend.Custom
                             s.RouteId == route.Id);
                     }
 
-                    if (schedule == null) break;
+                    if (schedule == null)
+                    {
+                        skipManyFlights = true;
+                        break;
+                    }
 
                     FlightData flightData = new FlightData()
                     {
                         Id = schedule.Id,
                         FromCode = schedule.Route.DepartureAirport.Iatacode,
                         ToCode = schedule.Route.ArrivalAirport.Iatacode,
-                        Date = schedule.Date.ToString(),
-                        Time = schedule.Time.ToString(),
+                        Date = schedule.Date.ToString("yyyy-MM-dd"),
+                        Time = schedule.Time.ToString("HH:mm"),
                         FlightNumber = schedule.FlightNumber!,
                         EconomyPrice = (int)schedule.EconomyPrice,
                     };
                     manyFlightsData.Flights.Add(flightData);
                 }
 
-                manyFlights.Add(manyFlightsData);
+                if (!skipManyFlights)
+                    manyFlights.Add(manyFlightsData);
             }
 
             return new CreateManyFlightsResponse(
