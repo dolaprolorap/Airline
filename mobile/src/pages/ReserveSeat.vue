@@ -14,21 +14,6 @@
       <div v-if="showImage && showButtons" class="img_plane">
         <img :src="seatImage" alt="" class="plane_img_fc">
         <button
-            v-if="showButtons && passengerClass === '3'"
-            v-for="(seat, index) in seatConfig.firstClass"
-            :key="index"
-            @click="reserveSeatFirst(seat.row, seat.column)"
-            class="reserve-button__first"
-            :style="{
-              position: 'absolute',
-              top: seat.top,
-              left: seat.left,
-              backgroundImage: getSeatBackgroundImage(seat.column)
-            }"
-        >
-          <div class="label">{{ seat.label }}</div>
-        </button>
-        <button
             v-if="showButtons && passengerClass === '2'"
             v-for="(seat, index) in seatConfig.businessClass"
             :key="index"
@@ -38,8 +23,36 @@
               position: 'absolute',
               top: seat.top,
               left: seat.left,
-              backgroundImage: getSeatBackgroundImage(seat.column)
+              backgroundImage: getSeatBackgroundImage(seat.column),
+              opacity: seat.reserved || selectedSeat ===
+              `BusinessClass: Row: ${seat.row} Seat: ${seat.column}` ? 0.5 : 1,
+              pointerEvents: seat.reserved || selectedSeat ===
+              `BusinessClass: Row: ${seat.row} Seat: ${seat.column}` ? 'none' : 'auto'
             }"
+            :disabled="seat.reserved || selectedSeat ===
+            `BusinessClass: Row: ${seat.row} Seat: ${seat.column}`"
+        >
+          <div class="label">{{ seat.label }}</div>
+        </button>
+
+        <button
+            v-if="showButtons && passengerClass === '3'"
+            v-for="(seat, index) in seatConfig.firstClass"
+            :key="index"
+            @click="reserveSeatFirst(seat.row, seat.column)"
+            class="reserve-button__first"
+            :style="{
+              position: 'absolute',
+              top: seat.top,
+              left: seat.left,
+              backgroundImage: getSeatBackgroundImage(seat.column),
+              opacity: seat.reserved || selectedSeat ===
+              `FirstClass: Row: ${seat.row} Seat: ${seat.column}` ? 0.5 : 1,
+              pointerEvents: seat.reserved || selectedSeat ===
+              `FirstClass: Row: ${seat.row} Seat: ${seat.column}` ? 'none' : 'auto'
+            }"
+            :disabled="seat.reserved || selectedSeat ===
+            `FirstClass: Row: ${seat.row} Seat: ${seat.column}`"
         >
           <div class="label">{{ seat.label }}</div>
         </button>
@@ -54,12 +67,16 @@
       </div>
     </div>
   </div>
-
+  <div v-if="selectedSeat !== ''" class="message_reserve">
+    Reserved seat: {{ selectedSeat }}
+  </div>
   <div class="button-container">
     <router-link class="mainmenu-router__link" to="/">
       <button class="back-button">Back</button>
     </router-link>
-    <button class="reserve-seat__button">Reserve Seat</button>
+    <button v-if="passengerClass === '2' || passengerClass === '3'"
+            class="reserve-seat__button">Reserve Seat
+    </button>
   </div>
 </template>
 
@@ -70,41 +87,42 @@ const passengerClass = ref('');
 const showImage = ref(false);
 const showButtons = ref(false);
 const seatImage = ref();
+const selectedSeat = ref('');
 
 const seatConfig = {
   firstClass: [
-    { row: '1', column: '1', top: '55.6%', left: '24.5%', label: 'A' },
-    { row: '2', column: '1', top: '63.6%', left: '24.4%', label: 'A' },
-    { row: '3', column: '1', top: '71.8%', left: '24.5%', label: 'A' },
+    {row: '1', column: '1', top: '55.6%', left: '24.5%', label: 'A', reserved: false},
+    {row: '2', column: '1', top: '63.6%', left: '24.4%', label: 'A', reserved: false},
+    {row: '3', column: '1', top: '71.8%', left: '24.5%', label: 'A', reserved: false},
 
-    { row: '1', column: '2', top: '55.6%', left: '57.3%', label: 'C' },
-    { row: '2', column: '2', top: '63.6%', left: '57%', label: 'C' },
-    { row: '3', column: '2', top: '71.8%', left: '57.3%', label: 'C' },
+    {row: '1', column: '2', top: '55.6%', left: '57.3%', label: 'C', reserved: false},
+    {row: '2', column: '2', top: '63.6%', left: '57%', label: 'C', reserved: false},
+    {row: '3', column: '2', top: '71.8%', left: '57.3%', label: 'C', reserved: false},
 
-    { row: '1', column: '3', top: '55.6%', left: '70%', label: 'D' },
-    { row: '2', column: '3', top: '63.6%', left: '69.8%', label: 'D' },
-    { row: '3', column: '3', top: '71.8%', left: '70%', label: 'D' },
+    {row: '1', column: '3', top: '55.6%', left: '70%', label: 'D', reserved: false},
+    {row: '2', column: '3', top: '63.6%', left: '69.8%', label: 'D', reserved: false},
+    {row: '3', column: '3', top: '71.8%', left: '70%', label: 'D', reserved: false},
   ],
   businessClass: [
-    { row: '1', column: '1', top: '48.7%', left: '20.8%', label: 'A' },
-    { row: '2', column: '1', top: '56.8%', left: '20.8%', label: 'A' },
-    { row: '3', column: '1', top: '65.3%', left: '20.8%', label: 'A' },
-    { row: '4', column: '1', top: '73.9%', left: '20.8%', label: 'A' },
+    {row: '1', column: '1', top: '48.7%', left: '20.8%', label: 'A', reserved: false},
+    {row: '2', column: '1', top: '56.8%', left: '20.8%', label: 'A', reserved: false},
+    {row: '3', column: '1', top: '65.3%', left: '20.8%', label: 'A', reserved: false},
+    {row: '4', column: '1', top: '73.9%', left: '20.8%', label: 'A', reserved: false},
 
-    { row: '1', column: '2', top: '48.7%', left: '33.5%', label: 'B' },
-    { row: '2', column: '2', top: '56.8%', left: '33.5%', label: 'B' },
-    { row: '3', column: '2', top: '65.3%', left: '33.5%', label: 'B' },
-    { row: '4', column: '2', top: '73.9%', left: '33.5%', label: 'B' },
+    {row: '1', column: '2', top: '48.7%', left: '33.5%', label: 'B', reserved: false},
+    {row: '2', column: '2', top: '56.8%', left: '33.5%', label: 'B', reserved: false},
+    {row: '3', column: '2', top: '65.3%', left: '33.5%', label: 'B', reserved: false},
+    {row: '4', column: '2', top: '73.9%', left: '33.5%', label: 'B', reserved: false},
 
-    { row: '1', column: '3', top: '48.7%', left: '56.3%', label: 'C' },
-    { row: '2', column: '3', top: '56.8%', left: '56.3%', label: 'C' },
-    { row: '3', column: '3', top: '65.3%', left: '56.3%', label: 'C' },
-    { row: '4', column: '3', top: '73.9%', left: '56.3%', label: 'C' },
+    {row: '1', column: '3', top: '48.7%', left: '56.3%', label: 'C', reserved: false},
+    {row: '2', column: '3', top: '56.8%', left: '56.3%', label: 'C', reserved: false},
+    {row: '3', column: '3', top: '65.3%', left: '56.3%', label: 'C', reserved: false},
+    {row: '4', column: '3', top: '73.9%', left: '56.3%', label: 'C', reserved: false},
 
-    { row: '1', column: '4', top: '48.7%', left: '69%', label: 'D' },
-    { row: '2', column: '4', top: '56.8%', left: '69%', label: 'D' },
-    { row: '3', column: '4', top: '65.3%', left: '69%', label: 'D' },
-    { row: '4', column: '4', top: '73.9%', left: '69%', label: 'D' },
+    {row: '1', column: '4', top: '48.7%', left: '69%', label: 'D', reserved: false},
+    {row: '2', column: '4', top: '56.8%', left: '69%', label: 'D', reserved: false},
+    {row: '3', column: '4', top: '65.3%', left: '69%', label: 'D', reserved: false},
+    {row: '4', column: '4', top: '73.9%', left: '69%', label: 'D', reserved: false},
   ],
 };
 
@@ -142,12 +160,31 @@ const getSeatBackgroundImage = (column: string) => {
     return "url('/src/assets/img/left_seat.png')";
   }
 };
+
 const reserveSeatBusiness = (row: string, seat: string) => {
-  console.log(`Reserving seat BusinessClass ${row}${seat}`);
+  if (selectedSeat.value !== '') {
+    alert(`You have already selected seat ${selectedSeat.value}.`);
+    return;
+  }
+  const selectedSeatObj = seatConfig.businessClass.find(s => s.row === row && s.column === seat);
+  if (selectedSeatObj && !selectedSeatObj.reserved) {
+    selectedSeat.value = `BusinessClass: Row: ${row} Seat: ${seat}`;
+    selectedSeatObj.reserved = true;
+    alert(`Row: ${row} Seat: ${seat} reserved successfully!`);
+  }
 };
 
 const reserveSeatFirst = (row: string, seat: string) => {
-  console.log(`Reserving seat FirstClass ${row}${seat}`);
+  if (selectedSeat.value !== '') {
+    alert(`You have already selected seat ${selectedSeat.value}.`);
+    return;
+  }
+  const selectedSeatObj = seatConfig.firstClass.find(s => s.row === row && s.column === seat);
+  if (selectedSeatObj && !selectedSeatObj.reserved) {
+    selectedSeat.value = `FirstClass: Row: ${row} Seat: ${seat}`;
+    selectedSeatObj.reserved = true;
+    alert(`Row: ${row} Seat: ${seat} reserved successfully!`);
+  }
 };
 </script>
 
@@ -231,8 +268,9 @@ const reserveSeatFirst = (row: string, seat: string) => {
   background-repeat: no-repeat;
 }
 
-.reserve-button__first:hover {
-  opacity: 0.8;
+.reserve-button__first[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .message {
@@ -268,5 +306,14 @@ const reserveSeatFirst = (row: string, seat: string) => {
   margin-bottom: 120px;
   margin-top: 5px;
   margin-left: 8%;
+}
+
+.message_reserve{
+  position: relative;
+  bottom: 120px;
+  display: flex;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
 }
 </style>
