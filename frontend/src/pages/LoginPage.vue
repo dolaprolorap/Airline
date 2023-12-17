@@ -50,10 +50,10 @@ const submitForm = () => {
 
       const msg = response.data.msg;
 
-      if (msg === 'UserNotFound') {
-        error.value = 'Wrong username or password';
-        return;
-      }
+        if (msg === 'UserNotFound' || msg === 'InvalidPwd') {
+          error.value = 'Wrong username or password';
+          return;
+        }
 
       const accessToken = response.data.data.accessToken;
       const refreshToken = response.data.data.refreshToken;
@@ -138,7 +138,7 @@ function exit() {
           v-if='error !== ""'
           class='row full-width justify-center text-negative'>
           {{ error }}
-          <q-btn flat size='0px'
+          <q-btn round flat size='0px'
                  style='position: absolute; top: -8px; right: -15px; padding: 1px; border: 0px solid transparent;'
                  @click='closeBanner'>
             <img src='public/black_crosss.png' style='width: 24px; height: 24px'>

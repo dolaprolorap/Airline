@@ -21,9 +21,9 @@ export const getNewTokens = async () => {
   return await api
     .post('/Auth/Refresh', {
       accessToken: LocalStorage.getItem('accessToken'),
-      refreshToken: LocalStorage.getItem('refreshToken')
+      refreshToken: LocalStorage.getItem('refreshToken'),
     })
-    .then(response => {
+    .then((response) => {
       const data = response.data;
 
       LocalStorage.set('accessToken', data.data.accessToken);
@@ -36,38 +36,35 @@ export const getNewTokens = async () => {
       }
     });
 };
-export const authPost = async (url: string, data: object) => {
-  return api.post(url, data, {
+export const authPost = async (
+  url: string,
+  data: object,
+  headers: object = {}
+) => {
+  const config = {
     headers: {
-      Authorization: 'Bearer ' + LocalStorage.getItem('accessToken')
-    }
-  })
-    .catch(async error => {
-      if (error.response.status === 401) {
-        await getNewTokens();
-        return await api.post(url, data, {
-          headers: {
-            Authorization: 'Bearer ' + LocalStorage.getItem('accessToken')
-          }
-        });
-      } else throw `Unhandled error ${error}`;
-    });
+      Authorization: 'Bearer ' + LocalStorage.getItem('accessToken'),
+      ...headers,
+    },
+  };
+  return api.post(url, data, config).catch(async (error) => {
+    if (error.response.status === 401) {
+      await getNewTokens();
+      return await api.post(url, data, config);
+    } else throw `Unhandled error ${error}`;
+  });
 };
-
-export const authGet = async (url: string) => {
-  return api.get(url, {
+export const authGet = async (url: string, headers: object = {}) => {
+  const config = {
     headers: {
-      Authorization: 'Bearer ' + LocalStorage.getItem('accessToken')
-    }
-  })
-    .catch(async error => {
-      if (error.response.status === 401) {
-        await getNewTokens();
-        return await api.get(url, {
-          headers: {
-            Authorization: 'Bearer ' + LocalStorage.getItem('accessToken')
-          }
-        });
-      } else throw `Unhandled error ${error}`;
-    });
+      Authorization: 'Bearer ' + LocalStorage.getItem('accessToken'),
+      ...headers,
+    },
+  };
+  return api.get(url, config).catch(async (error) => {
+    if (error.response.status === 401) {
+      await getNewTokens();
+      return await api.get(url, config);
+    } else throw `Unhandled error ${error}`;
+  });
 };
