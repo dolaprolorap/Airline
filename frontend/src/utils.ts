@@ -1,12 +1,17 @@
 import { api } from 'boot/axios';
+
 import { LocalStorage } from 'quasar';
-import { useRouter } from 'vue-router';
+
+import { Router } from 'src/router';
 
 export const getNewTokens = async () => {
   if (!LocalStorage.has('accessToken') || !LocalStorage.has('refreshToken')) {
+
     LocalStorage.set('accessToken', '');
     LocalStorage.set('refreshToken', '');
-    await useRouter().push('/');
+
+    await Router.push('/');
+
     throw Error('Not authorized');
   }
 
@@ -19,7 +24,7 @@ export const getNewTokens = async () => {
       if (response.status !== 200) {
         LocalStorage.set('accessToken', '');
         LocalStorage.set('refreshToken', '');
-        useRouter().push('/').then(() => {
+        Router.push('/').then(() => {
           throw Error('Not authorized');
         });
       }
