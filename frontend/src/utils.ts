@@ -18,7 +18,7 @@ export const getNewTokens = async () => {
 
     throw Error('Not authorized');
   }
-  return api
+  return await api
     .post('/Auth/Refresh', {
       accessToken: LocalStorage.getItem('accessToken'),
       refreshToken: LocalStorage.getItem('refreshToken')
