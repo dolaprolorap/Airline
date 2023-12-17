@@ -26,6 +26,10 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'flightmanager',
         component: () => import('pages/FlightEditor.vue')
+      },
+      {
+        path: 'book-flights',
+        component: () => import('pages/SearchFlightsPage.vue')
       }
     ]
   },

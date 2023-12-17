@@ -42,15 +42,6 @@ interface User {
   active: boolean,
 }
 
-interface Row {
-  firstName: string,
-  lastName: string,
-  age: number,
-  roleName: string,
-  email: string,
-  officeName: string,
-  active: boolean
-}
 
 const selectedUsers: Ref<User[]> = ref([]);
 
@@ -121,7 +112,7 @@ authGet('/AdminPanel/Users').then(
 });
 
 
-const rows: ComputedRef<Row[]> = computed(() => {
+const rows: ComputedRef<User[]> = computed(() => {
   return users.value.map(user => {
     return { ...user, age: calculateAge(user.birthdate) };
   });
@@ -151,7 +142,7 @@ const calculateAge = (birthday: string): number => {
   return Math.abs(ageDate.getUTCFullYear() - 1970);
 };
 
-const determineUserColor = (user: Row) => {
+const determineUserColor = (user: User) => {
   if (!user.active)
     return 'bg-red text-white';
 
@@ -162,7 +153,7 @@ const determineUserColor = (user: Row) => {
 };
 
 const filterRows = (
-  rows: Row[],
+  rows: User[],
   terms: string
 ) => {
   if (terms === 'All offices')
