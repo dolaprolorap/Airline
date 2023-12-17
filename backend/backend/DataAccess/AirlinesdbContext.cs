@@ -316,6 +316,34 @@ public partial class AirlinesdbContext : DbContext
                 .HasConstraintName("FK_Schedule_Routes");
         });
 
+        modelBuilder.Entity<Survey>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity
+                .ToTable("surveys")
+                .HasCharSet("utf8mb3")
+                .UseCollation("utf8mb3_general_ci");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+            entity.Property(e => e.FromAirport)
+                .HasMaxLength(3)
+                .UseCollation("utf8mb4_0900_ai_ci")
+                .HasCharSet("utf8mb4");
+            entity.Property(e => e.ToAirport)
+                .HasMaxLength(3)
+                .UseCollation("utf8mb4_0900_ai_ci")
+                .HasCharSet("utf8mb4");
+            entity.Property(e => e.Sex)
+                .HasMaxLength(1)
+                .UseCollation("utf8mb4_0900_ai_ci")
+                .HasCharSet("utf8mb4");
+            entity.Property(e => e.CabinType)
+                .HasMaxLength(20)
+                .UseCollation("utf8mb4_0900_ai_ci")
+                .HasCharSet("utf8mb4");
+        });
+
         modelBuilder.Entity<Ticket>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");

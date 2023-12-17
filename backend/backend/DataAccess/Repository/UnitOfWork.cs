@@ -17,6 +17,7 @@ namespace backend.DataAccess.Repository
         public IRepository<Role> RoleRepo { get; private set; }
         public IRepository<Route> RouteRepo { get; private set; }
         public IRepository<Schedule> ScheduleRepo { get; private set; }
+        public IRepository<Survey> SurveyRepo { get; private set; }
         public IRepository<Ticket> TicketRepo { get; private set; }
         public IRepository<Token> TokenRepo { get; private set; }
         public IRepository<Trackerrecord> TrackerrecordRepo { get; private set; }
@@ -37,6 +38,7 @@ namespace backend.DataAccess.Repository
             RoleRepo = new Repository<Role>(db);
             RouteRepo = new Repository<Route>(db);
             ScheduleRepo = new Repository<Schedule>(db);
+            SurveyRepo = new Repository<Survey>(db);
             TicketRepo = new Repository<Ticket>(db);
             TokenRepo = new Repository<Token>(db);
             TrackerrecordRepo = new Repository<Trackerrecord>(db);
