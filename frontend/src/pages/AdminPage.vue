@@ -2,17 +2,15 @@
 import { computed, ComputedRef, reactive, Ref, ref } from 'vue';
 import { QTableColumn } from 'quasar';
 
-import { authGet, authPost, getNewTokens } from 'src/utils';
+import { authGet, authPost } from 'src/utils';
 import { Router } from 'src/router';
 
-getNewTokens().then(() =>
-  authGet('/Auth/GetMyself')
-    .then(response => {
-        if (response.data.data.user.roleName === 'User')
-          Router.push('/user');
-      }
-    )
-);
+authGet('/Auth/GetMyself')
+  .then(response => {
+      if (response.data.data.user.roleName === 'User')
+        Router.replace('/user');
+    }
+  );
 
 interface Office {
   country: string,
@@ -240,7 +238,7 @@ const submitAddUser = () => {
           selection='multiple'
           v-model:selected='selectedUsers'
           :selected-rows-label='getSelectedRowsText'
-          :rows-per-page-options='[10, 15, 20, 25, 50, 0]'
+          :rows-per-page-options='[0, 10, 15, 20, 25, 50]'
         >
           <template v-slot:header-cell='props'>
             <q-th v-if='props.col.name !== "id"' :props='props' class='text-white tex-gyre-adventor-bold'

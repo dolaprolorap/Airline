@@ -1,6 +1,8 @@
 <script setup lang='ts'>
 import { exit } from 'src/utils';
+import { LocalStorage } from 'quasar';
 
+const roleName = LocalStorage.getItem('roleName');
 
 </script>
 
@@ -10,7 +12,7 @@ import { exit } from 'src/utils';
     <q-header elevated>
       <q-toolbar>
         <q-toolbar-title>
-          <q-btn flat to='/'>
+          <q-btn flat :to='roleName === "Administrator" ? "/admin" : "/user"'>
             <q-img src='logo_white.png' fit='scale-down' width='170px' />
           </q-btn>
         </q-toolbar-title>

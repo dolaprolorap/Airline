@@ -5,6 +5,16 @@ import { api } from 'src/boot/axios';
 import { useRouter } from 'vue-router';
 
 import { LocalStorage } from 'quasar';
+import { authGet } from 'src/utils';
+
+authGet('/Auth/GetMyself')
+  .then(response => {
+    const role = response.data.data.user.roleName;
+    if (role === 'Administrator')
+      router.replace({ path: '/admin' });
+    if (role === 'User')
+      router.replace({ path: '/user' });
+  });
 
 const email = ref('');
 const password = ref('');
@@ -49,20 +59,23 @@ const submitForm = () => {
 
       LocalStorage.set('accessToken', accessToken);
       LocalStorage.set('refreshToken', refreshToken);
-      LocalStorage.set('email', email)
+      LocalStorage.set('email', email);
 
       api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 
-      api.get('/Auth/GetMyself')
+      authGet('/Auth/GetMyself')
         .then(response => {
           const role = response.data.data.user.roleName;
+
           if (role === 'Administrator')
             router.push({ path: '/admin' });
           if (role === 'User')
             router.push({ path: '/user' });
+
+          LocalStorage.set('roleName', role);
         });
     });
-}
+};
 
 function exit() {
   return;
