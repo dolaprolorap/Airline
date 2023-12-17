@@ -4,6 +4,8 @@ using backend.DataAccess.Repository;
 using Microsoft.AspNetCore.Authorization;
 using backend.Services;
 using backend.ServerResponse.Controllers.AdminPanelController;
+using backend.Models.DB;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
 {
@@ -29,32 +31,45 @@ namespace backend.Controllers
         }
 
         [HttpGet("Users")]
-        public IActionResult GetUsersByOfficeId([FromQuery] int? officeId) 
+        public IActionResult GetUsersByOfficeId([FromQuery] string? officeName) 
         {
-            bool officeSpecified = officeId == null;
-            IEnumerable<Models.DB.User> users;
+            bool officeSpecified = officeName != null;
+            IEnumerable<User> users;
 
             if (officeSpecified)
             {
-                users = _unit.UserRepo.ReadAll();
+                var office = _unit.OfficeRepo.ReadFirst(o => o.Title == officeName);
+                if (office == null)
+                {
+                    return new GetUsersByOfficeIdResponse(
+                        GetUsersByOfficeIdResponseType.OfficeNotFound,
+                        officeSpecified,
+                        officeName: officeName).
+                        ConvertToActionResult();
+                }
+
+                users = _unit.UserRepo.ReadWhere(user => user.OfficeId == office.Id);
             }
             else
             {
-                users = _unit.UserRepo.ReadWhere(user => user.OfficeId == officeId);
+                users = _unit.UserRepo.ReadAll();
             }
+
+            _unit.OfficeRepo.ReadWhere(o => true).Load();
+            _unit.RoleRepo.ReadWhere(r => true).Load();
 
             return new GetUsersByOfficeIdResponse(
                 GetUsersByOfficeIdResponseType.UsersGotten,
                 officeSpecified,
-                officeId: officeId,
+                officeName: officeName,
                 foundUsers: users.Select(u => new
                 {
                     u.Id,
-                    RoleName = _unit.RoleRepo.ReadFirst(r => r.Id == u.RoleId)!.Title,
+                    OfficeName = u.Office!.Title,
                     u.Email,
                     u.FirstName,
                     u.LastName,
-                    OfficeName = _unit.OfficeRepo.ReadFirst(o => o.Id == u.OfficeId)!.Title,
+                    RoleName = u.Role!.Title,
                     u.Birthdate,
                     u.Active
                 })).

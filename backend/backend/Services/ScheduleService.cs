@@ -90,6 +90,7 @@ namespace backend.Services
             {
                 scheduleRecords.Add(new ScheduleRecord()
                 {
+                    Id = flight.Id,
                     Date = flight.Date,
                     Time = flight.Time,
                     FromAirportName = flight.Route.DepartureAirport.Name!,
@@ -106,12 +107,12 @@ namespace backend.Services
 
         public StatusResponse SetActiveFlight(SetActiveFlight setActiveFlight)
         {
-            var flight = _unit.ScheduleRepo.ReadFirst(s => s.FlightNumber == setActiveFlight.FlightNumber.ToString());
+            var flight = _unit.ScheduleRepo.ReadFirst(s => s.Id == setActiveFlight.ScheduleId);
             if (flight == null)
                 return new StatusResponse(
                     StatusResponseType.UserFail,
                     "ScheduleNotFound",
-                    "There is no schedule with that flight number: " + setActiveFlight.FlightNumber);
+                    "There is no schedule with that id: " + setActiveFlight.ScheduleId);
 
             flight.Confirmed = setActiveFlight.ActiveState;
 
@@ -127,13 +128,13 @@ namespace backend.Services
 
         public StatusResponse EditFlight(EditFlight editFlight)
         {
-            var flight = _unit.ScheduleRepo.ReadFirst(s => s.FlightNumber == editFlight.FlightNumber.ToString());
+            var flight = _unit.ScheduleRepo.ReadFirst(s => s.Id == editFlight.ScheduleId);
             if (flight == null)
             {
                 return new StatusResponse(
                     StatusResponseType.UserFail,
                     "ScheduleNotFound",
-                    "There is no flight with flight number: " + editFlight.FlightNumber);
+                    "There is no schedule with id: " + editFlight.ScheduleId);
             }
 
             if (!DateOnly.TryParseExact(editFlight.Date, "yyyy-MM-dd", out DateOnly date))
@@ -173,20 +174,21 @@ namespace backend.Services
             int duplicates = 0;
             int failedConverts = 0;
 
-            List<int> appliedUpdates = new List<int>();
+            List<Tuple<int, DateOnly>> appliedUpdates = new List<Tuple<int, DateOnly>>();
 
             foreach (var recordStr in recordsStr)
             {
                 ScheduleUpdateRecord? record;
                 if (_convertScheduleRecordService.ScheduleUpdateRecordFromCsv(recordStr, out record))
                 {
-                    if (!appliedUpdates.Contains(record!.FlightNumber))
+                    var dayFlightNumber = new Tuple<int, DateOnly>(record.FlightNumber, record.Date);
+                    if (!appliedUpdates.Contains(dayFlightNumber))
                     {
                         var status = _applyUpdateRecord(record);
                         if (status.Status == StatusResponseType.Success)
                         {
                             successUpdates++;
-                            appliedUpdates.Add(record!.FlightNumber);
+                            appliedUpdates.Add(dayFlightNumber);
                         }
                         else
                         {
@@ -242,22 +244,25 @@ namespace backend.Services
                 FlightNumber = record.FlightNumber.ToString()
             };
 
+            var schedule = _unit.ScheduleRepo.ReadFirst(
+                s => s.FlightNumber == newSchedule.FlightNumber &&
+                s.Date == newSchedule.Date);
+
             if (record.Type == ScheduleUpdateRecordType.Add)
             {
-                if (_unit.ScheduleRepo.ReadFirst(s => s.FlightNumber == newSchedule.FlightNumber) == null)
+                if (schedule == null)
                 {
                     _unit.ScheduleRepo.Add(newSchedule);
                 }
                 else
                 {
                     return new StatusResponse(StatusResponseType.UserFail,
-                        "Record with this flight number already exists: " + newSchedule.FlightNumber,
-                        "Record with this flight number already exists: " + newSchedule.FlightNumber);
+                        "Record with this flight number already exists: " + newSchedule.FlightNumber + " date: " + newSchedule.Date,
+                        "Record with this flight number already exists: " + newSchedule.FlightNumber + " date: " + newSchedule.Date);
                 }
             }
             else if (record.Type == ScheduleUpdateRecordType.Edit)
             {
-                var schedule = _unit.ScheduleRepo.ReadFirst(s => s.FlightNumber == newSchedule.FlightNumber);
                 if (schedule != null)
                 {
                     schedule.Date = newSchedule.Date;
@@ -272,8 +277,8 @@ namespace backend.Services
                 else
                 {
                     return new StatusResponse(StatusResponseType.UserFail,
-                        "There is no record with this flight number: " + newSchedule.FlightNumber,
-                        "There is no record with this flight number: " + newSchedule.FlightNumber);
+                        "There is no record with this flight number: " + newSchedule.FlightNumber + " date: " + newSchedule.Date,
+                        "There is no record with this flight number: " + newSchedule.FlightNumber + " date: " + newSchedule.Date);
                 }
             }
 

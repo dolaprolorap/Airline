@@ -100,22 +100,22 @@ namespace backend.Services
 
         public StatusResponse Register(RegisterUser registerUser)
         {
-            var queryableUser = _unit.UserRepo.ReadWhere(user => user.Email == registerUser.Email);
-            if (queryableUser.Any())
+            var user = _unit.UserRepo.ReadFirst(user => user.Email == registerUser.Email);
+            if (user != null)
             {
                 return new RegisterResponse(RegisterResponseType.UserAlreadyExists, userEmail: registerUser.Email);
             }
 
-            var queryableRole = _unit.RoleRepo.ReadWhere(role => role.Id == registerUser.RoleID);
-            if (!queryableRole.Any())
+            var role = _unit.RoleRepo.ReadFirst(role => role.Title == registerUser.RoleName);
+            if (role == null)
             {
-                return new RegisterResponse(RegisterResponseType.RoleIdWasNotFound, roleId: registerUser.RoleID);
+                return new RegisterResponse(RegisterResponseType.RoleNotFound, roleName: registerUser.RoleName);
             }
 
-            var queryableOffice = _unit.OfficeRepo.ReadWhere(office => office.Id == registerUser.OfficeID);
-            if (!queryableOffice.Any())
+            var office = _unit.OfficeRepo.ReadFirst(office => office.Title == registerUser.OfficeName);
+            if (office == null)
             {
-                return new RegisterResponse(RegisterResponseType.OfficeIdWasNotFound, officeId: registerUser.OfficeID);
+                return new RegisterResponse(RegisterResponseType.OfficeNotFound, officeName: registerUser.OfficeName);
             }
 
             DateOnly birthdate;
@@ -136,12 +136,12 @@ namespace backend.Services
             User newUser = new User()
             {
                 Id = lastMaxId + 1,
-                RoleId = registerUser.RoleID,
+                RoleId = role.Id,
                 Email = registerUser.Email,
                 Password = _hasher.HashPassword(new User(), registerUser.Password),
                 FirstName = registerUser.Firstname,
                 LastName = registerUser.Lastname,
-                OfficeId = registerUser.OfficeID,
+                OfficeId = office.Id,
                 Birthdate = birthdate,
                 Active = true
             };

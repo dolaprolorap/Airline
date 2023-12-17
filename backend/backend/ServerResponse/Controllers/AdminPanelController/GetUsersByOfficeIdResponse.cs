@@ -2,6 +2,7 @@
 {
     public enum GetUsersByOfficeIdResponseType
     {
+        OfficeNotFound,
         UsersGotten
     }
 
@@ -12,7 +13,7 @@
         public GetUsersByOfficeIdResponse(
             GetUsersByOfficeIdResponseType responseType,
             bool officeIdSpecified,
-            int? officeId = null,
+            string? officeName = null,
             object? foundUsers = null)
         {
             ResponseType = responseType;
@@ -20,10 +21,14 @@
 
             switch (ResponseType)
             {
+                case GetUsersByOfficeIdResponseType.OfficeNotFound:
+                    Status = StatusResponseType.UserFail;
+                    LoggerMsg = "Office not found with name: " + officeName ?? "null";
+                    break;
                 case GetUsersByOfficeIdResponseType.UsersGotten:
                     Status = StatusResponseType.Success;
                     LoggerMsg = officeIdSpecified ?
-                        "Users got with office id: " + officeId ?? "null" :
+                        "Users got with office name: " + officeName ?? "null" :
                         "All users got";
                     Data = foundUsers;
                     break;

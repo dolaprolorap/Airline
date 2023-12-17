@@ -2,7 +2,7 @@
 {
     public class SetActiveFlight
     {
-        public int FlightNumber { get; set; }
+        public int ScheduleId { get; set; }
         public bool ActiveState { get; set; }
     }
 }

@@ -5,15 +5,19 @@ namespace backend.ServerResponse.Services.AuthService
     public enum RegisterResponseType
     {
         UserAlreadyExists,
-        RoleIdWasNotFound,
-        OfficeIdWasNotFound,
+        RoleNotFound,
+        OfficeNotFound,
         InvalidDateTimeFormat,
         UserCreated
     }
 
     public class RegisterResponse : StatusResponse
     {
-        public RegisterResponse(RegisterResponseType type, string? userEmail = null, int? roleId = null, int? officeId = null,
+        public RegisterResponse(
+            RegisterResponseType type, 
+            string? userEmail = null, 
+            string? roleName = null, 
+            string? officeName = null,
             string? dateTimeStr = null)
         {
             UserMsg = type.ToString();
@@ -24,13 +28,13 @@ namespace backend.ServerResponse.Services.AuthService
                     Status = StatusResponseType.Success;
                     LoggerMsg = string.Format("User with email '{0}' already exists", userEmail);
                     break;
-                case RegisterResponseType.RoleIdWasNotFound:
+                case RegisterResponseType.RoleNotFound:
                     Status = StatusResponseType.UserFail;
-                    LoggerMsg = string.Format("Role id '{0}' was not found", roleId);
+                    LoggerMsg = string.Format("Role name '{0}' was not found", roleName);
                     break;
-                case RegisterResponseType.OfficeIdWasNotFound:
+                case RegisterResponseType.OfficeNotFound:
                     Status = StatusResponseType.UserFail;
-                    LoggerMsg = string.Format("Office id '{0}' was not found", officeId);
+                    LoggerMsg = string.Format("Office name '{0}' was not found", officeName);
                     break;
                 case RegisterResponseType.InvalidDateTimeFormat:
                     Status = StatusResponseType.UserFail;
