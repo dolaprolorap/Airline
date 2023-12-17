@@ -302,12 +302,12 @@ const submitAddUser = () => {
           <q-input dense v-model='selectedUsers[0].officeName' readonly label='Office' />
           <div class='column q-mt-md'>
             Role:
-            <q-radio v-model='newRole' val='Administrator' label='Administrator' />
-            <q-radio v-model='newRole' val='User' label='User' />
+            <q-radio color='secondary' v-model='newRole' val='Administrator' label='Administrator' />
+            <q-radio color='secondary' v-model='newRole' val='User' label='User' />
           </div>
         </q-card-section>
 
-        <q-card-actions align='right' class='text-secondary'>
+        <q-card-actions align='between' class='text-secondary'>
           <q-btn class='bg-primary text-white tex-gyre-adventor-bold' label='Cancel' v-close-popup />
           <q-btn class='bg-primary text-white tex-gyre-adventor-bold' label='Submit' v-close-popup
                  @click='submitChangeRole' />
