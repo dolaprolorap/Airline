@@ -1,6 +1,6 @@
 <script setup lang='ts'>
-import { computed, ComputedRef, Ref, ref } from 'vue';
-import {QTableColumn } from 'quasar';
+import { computed, ComputedRef, reactive, Ref, ref } from 'vue';
+import { QTableColumn } from 'quasar';
 
 import { authGet, authPost, getNewTokens } from 'src/utils';
 import { Router } from 'src/router';
@@ -8,10 +8,10 @@ import { Router } from 'src/router';
 getNewTokens().then(() =>
   authGet('/Auth/GetMyself')
     .then(response => {
-      if (response.data.data.user.roleName === 'User')
-        Router.push('/user');
-    }
-  )
+        if (response.data.data.user.roleName === 'User')
+          Router.push('/user');
+      }
+    )
 );
 
 interface Office {
@@ -35,7 +35,6 @@ authGet('/Office/Get').then(
 );
 
 interface User {
-  id: number,
   officeName: string,
   email: string,
   firstName: string,
@@ -46,7 +45,6 @@ interface User {
 }
 
 interface Row {
-  id: number,
   firstName: string,
   lastName: string,
   age: number,
@@ -62,15 +60,9 @@ const changeRoleDialog = ref(false);
 
 const newRole = ref('');
 
+const addUserDialog = ref(false);
+
 const columns: QTableColumn[] = [
-  {
-    name: 'id',
-    required: true,
-    label: 'id',
-    field: 'id',
-    align: 'left',
-    sortable: true
-  },
   {
     name: 'firstName',
     label: 'Name',
@@ -140,7 +132,7 @@ const rows: ComputedRef<Row[]> = computed(() => {
 
 const getSelectedRowsText = (amountOfRows: number) => `${amountOfRows} users selected.`;
 
-const submitChange = () => {
+const submitChangeRole = () => {
   if (selectedUsers.value[0].roleName === newRole.value) {
     return;
   }
@@ -187,12 +179,43 @@ const changeLogin = () => {
   for (let selectedUser of selectedUsers.value) {
     const user = users.value.find(user => user.email === selectedUser.email) || selectedUser;
     user.active = !user.active;
-    authPost( '/AdminPanel/SetActiveUser', {
+    authPost('/AdminPanel/SetActiveUser', {
       email: user.email,
       activeState: user.active
-    })
+    });
   }
-}
+};
+
+const newUser = reactive({
+  email: '',
+  firstName: '',
+  lastName: '',
+  officeName: '',
+  birthdate: '',
+  password: ''
+});
+
+const clearNewUser = () => {
+  for (const field in newUser)
+    newUser[field as keyof typeof newUser] = '';
+};
+
+const submitAddUser = () => {
+  users.value = [
+    ...users.value,
+    {
+      ...newUser,
+      roleName: 'User',
+      active: true
+    }
+  ];
+  authPost('/AdminPanel/AddUser',
+    {
+      ...newUser,
+      roleName: 'User'
+    });
+};
+
 
 </script>
 
@@ -213,7 +236,7 @@ const changeLogin = () => {
           :filter='selectedOffice'
           :filter-method='filterRows'
           :loading='isLoading'
-          row-key='id'
+          row-key='email'
           selection='multiple'
           v-model:selected='selectedUsers'
           :selected-rows-label='getSelectedRowsText'
@@ -261,6 +284,7 @@ const changeLogin = () => {
             class='tex-gyre-adventor-bold col-2 offset-4'
             style='font-size: medium'
             color='primary'
+            @click='addUserDialog = true'
           >
             Add user
           </q-btn>
@@ -288,7 +312,43 @@ const changeLogin = () => {
         <q-card-actions align='right' class='text-secondary'>
           <q-btn class='bg-primary text-white tex-gyre-adventor-bold' label='Cancel' v-close-popup />
           <q-btn class='bg-primary text-white tex-gyre-adventor-bold' label='Submit' v-close-popup
-                 @click='submitChange' />
+                 @click='submitChangeRole' />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <q-dialog v-model='addUserDialog' @hide='clearNewUser'>
+      <q-card class='q-pa-sm' style='min-width: 350px'>
+        <q-card-section>
+          <div class='text-h6'>Add user</div>
+        </q-card-section>
+
+        <q-card-section class='q-pt-none'>
+          <q-form
+            class='column'
+            style='row-gap:8px'
+            autocorrect='off'
+            autocapitalize='off'
+            autocomplete='new-password'
+            spellcheck='false'
+          >
+            <q-input
+              autocomplete='new-password'
+              dense v-model='newUser.email' label='Email' type='email' />
+            <q-input dense v-model='newUser.firstName' label='Name' />
+            <q-input dense v-model='newUser.lastName' label='Last name' />
+            <q-select dense v-model='newUser.officeName' :options='officeOptions.slice(1)' label='Office' />
+            <q-input dense v-model='newUser.birthdate' label='Birthdate' type='date' />
+            <q-input dense v-model='newUser.password'
+                     autocomplete='new-password'
+                     label='Password' type='password' />
+          </q-form>
+        </q-card-section>
+
+        <q-card-actions align='right' class='text-secondary'>
+          <q-btn class='bg-primary text-white tex-gyre-adventor-bold' label='Cancel' v-close-popup />
+          <q-btn class='bg-primary text-white tex-gyre-adventor-bold' label='Submit' v-close-popup
+                 @click='submitAddUser' />
         </q-card-actions>
       </q-card>
     </q-dialog>
