@@ -18,6 +18,7 @@ const roleName = LocalStorage.getItem('roleName');
         </q-toolbar-title>
         <q-btn
           round
+          class='q-mr-lg'
           color='white'
           text-color='primary'
           icon='logout'
