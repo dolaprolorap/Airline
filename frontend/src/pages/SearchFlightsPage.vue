@@ -3,6 +3,9 @@ import { Ref, ref } from 'vue';
 import { authGet, authPost } from 'src/utils';
 import { IRow } from 'components/FlightTable.vue';
 import FlightTable from 'components/FlightTable.vue';
+import BookFlightDialog from 'components/BookFlightDialog.vue';
+
+authGet('/Auth/GetMyself');
 
 interface Airport {
   country: string,
@@ -13,8 +16,18 @@ interface Airport {
 
 const airportOptions: Ref<Airport[]> = ref([]);
 
-const airportFrom = ref(airportOptions.value[0]);
-const airportTo = ref(airportOptions.value[0]);
+const airportFrom = ref({
+  country: 'zhopa',
+  name: 'Doha',
+  iataCode: 'DOH',
+  label: 'Doha (DOH)'
+});
+const airportTo = ref({
+  country: 'zhopa',
+  name: 'Doha',
+  iataCode: 'DOH',
+  label: 'Doha (DOH)'
+});
 
 authGet('/Airport/Get')
   .then(response => {
@@ -29,7 +42,7 @@ authGet('/Airport/Get')
 
 const cabinOptions: Ref<string[]> = ref([]);
 
-const cabinType = ref('');
+const cabinType = ref('Economy');
 
 authGet('/CabinType/Get')
   .then(response => {
@@ -48,46 +61,91 @@ const returnDate = ref('2017-12-18');
 
 interface FlightGroup {
   numberOfStops: number,
-  flights: { date: string, time: string, flightNumber: string, economyPrice: number }[]
+  flights: {
+    date: string,
+    time: string,
+    flightNumber: string,
+    economyPrice: number,
+  }[]
 }
 
-const parseFlights = (flightGroups: FlightGroup[]) => {
-  return flightGroups.map(flightGroup => {
-    return {
-      numberOfStops: flightGroup.numberOfStops,
-      from: airportFrom.value.label,
-      to: airportTo.value.label,
-      date: flightGroup.flights[0].date,
-      time: flightGroup.flights[0].time,
-      flightIDs: `[ ${flightGroup.flights[0].flightNumber} ]`
-        .concat(flightGroup.flights.slice(1).reduce(
-          (acc: string, elem) => `${acc} - [ ${elem.flightNumber} ]`,
-          ''
-        )),
-      basePrice: flightGroup.flights.reduce(
-        (acc: number, elem) => acc + elem.economyPrice,
-        0
-      )
-    };
+
+const searchUnit = (date: string, from: string, to: string) => {
+  return authPost('/Book/SearchFlights', {
+    fromCode: from,
+    toCode: to,
+    cabinType: cabinType.value,
+    withReturn: false,
+    outboundDate: date,
+    returnDate: date
   });
 };
 
-const search = () => {
-  authPost('/Book/SearchFlights', {
-    fromCode: airportFrom.value.iataCode,
-    toCode: airportTo.value.iataCode,
-    cabinType: cabinType.value,
-    withReturn: Boolean(withReturn.value),
-    outboundDate: outboundDate.value,
-    returnDate: returnDate.value
-  })
-    .then(response => {
-      if (response.data.data.forwardManyFlights)
-        rowsOutbound.value = parseFlights(response.data.data.forwardManyFlights);
+const getFoundFlights = async (from: string, to: string) => {
+  const date = new Date(outboundDate.value);
 
-      if (response.data.data.returnManyFlights)
-        rowsReturn.value = parseFlights(response.data.data.returnManyFlights);
-    });
+  const newRows: IRow[] = [];
+  let id = 0;
+  for (let i = -3; i < 4; i++) {
+    const thisDate = new Date(date);
+    thisDate.setDate(date.getDate() + i);
+
+    let response = await searchUnit(
+      `${thisDate.getFullYear()}-${thisDate.getMonth() + 1}-${('0' + thisDate.getDate()).slice(-2)}`,
+      from,
+      to
+    );
+
+    for (const flightGroup of response.data.data.forwardManyFlights as FlightGroup[]) {
+      newRows.push({
+        numberOfStops: flightGroup.numberOfStops,
+        from: from,
+        to: to,
+        date: flightGroup.flights[0].date,
+        time: flightGroup.flights[0].time,
+        flightIDs: `[ ${flightGroup.flights[0].flightNumber} ]`
+          .concat(flightGroup.flights.slice(1).reduce(
+            (acc: string, elem) => `${acc} - [ ${elem.flightNumber} ]`,
+            ''
+          )),
+        basePrice: flightGroup.flights.reduce(
+          (acc: number, elem) => acc + elem.economyPrice,
+          0
+        ),
+        id: id++
+      });
+    }
+  }
+  return newRows;
+};
+
+const search = async () => {
+  rowsReturn.value = [];
+  rowsOutbound.value = [];
+
+  selectedOutbound.value = [];
+  selectedReturn.value = [];
+
+  isLoadingOutbound.value = true;
+  isLoadingReturn.value = withReturn.value ? true : isLoadingReturn.value;
+
+  rowsOutbound.value = await getFoundFlights(
+    airportFrom.value.iataCode,
+    airportTo.value.iataCode
+  );
+
+  isLoadingOutbound.value = false;
+
+  if (!withReturn.value) {
+    return;
+  }
+
+  rowsReturn.value = await getFoundFlights(
+    airportTo.value.iataCode,
+    airportFrom.value.iataCode
+  );
+
+  isLoadingReturn.value = false;
 };
 
 const isRangeOutbound = ref(false);
@@ -99,15 +157,16 @@ const rowsReturn: Ref<IRow[]> = ref([]);
 const selectedOutbound: Ref<IRow[]> = ref([]);
 const selectedReturn: Ref<IRow[]> = ref([]);
 
-const isLoading = ref(false);
+const isLoadingOutbound = ref(false);
+const isLoadingReturn = ref(false);
 
-const getSelectedRowsText = (amountOfRows: number) => `${amountOfRows} flights selected.`;
+const bookingDialog = ref(false)
 
 </script>
 
 <template>
-  <q-page class='row justify-center items-center'>
-    <q-card class='column fit' style='max-width: 60%'>
+  <q-page class='row justify-center items-start'>
+    <q-card class='column fit q-ma-xl' style='max-width: 60%'>
       <q-card-section class='row items-end justify-end text-h3'>
         Book flight
       </q-card-section>
@@ -140,9 +199,10 @@ const getSelectedRowsText = (amountOfRows: number) => `${amountOfRows} flights s
           <span class='text-primary text-h6'> Outbound options </span>
         </div>
         <FlightTable
-          :is-loading='isLoading'
+          :is-loading='isLoadingOutbound'
           :rows='rowsOutbound'
           :cabin-type='cabinType'
+          :filter='isRangeOutbound ? "" : outboundDate'
           v-model:selected='selectedOutbound'
         />
       </q-card-section>
@@ -153,13 +213,29 @@ const getSelectedRowsText = (amountOfRows: number) => `${amountOfRows} flights s
           <span class='text-primary text-h6'> Return options </span>
         </div>
         <FlightTable
-          :is-loading='isLoading'
+          :is-loading='isLoadingReturn'
           :rows='rowsReturn'
           :cabin-type='cabinType'
+          :filter='isRangeReturn ? "" : returnDate'
           v-model:selected='selectedReturn'
         />
       </q-card-section>
+      <q-splitter horizontal />
+      <q-card-section class='q-px-lg row justify-end'>
+        <q-btn class='bg-primary text-white tex-gyre-adventor-bold'
+               label='Book flight'
+               icon-right='flight'
+               @click='bookingDialog = true'
+               :disable='selectedOutbound.length === 0'
+        />
+      </q-card-section>
     </q-card>
+    <BookFlightDialog
+      :selected-outbound='selectedOutbound'
+      :selected-return='selectedReturn'
+      :cabin-type='cabinType'
+      v-model:active='bookingDialog'
+    />
   </q-page>
 </template>
 

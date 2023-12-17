@@ -2,6 +2,7 @@
 
 
 import { QTableColumn } from 'quasar';
+import BookFlightDialog from 'components/BookFlightDialog.vue';
 
 export interface IRow {
   from: string,
@@ -10,7 +11,8 @@ export interface IRow {
   time: string,
   flightIDs: string,
   basePrice: number,
-  numberOfStops: number
+  numberOfStops: number,
+  id: number
 }
 
 const props = defineProps<{
@@ -18,6 +20,7 @@ const props = defineProps<{
   rows: IRow[],
   selected: IRow[],
   isLoading: boolean,
+  filter: string
 }>();
 
 defineEmits(['update:selected']);
@@ -77,6 +80,14 @@ const columns: QTableColumn[] = [
     field: 'numberOfStops',
     align: 'left',
     sortable: true
+  },
+  {
+    name: 'id',
+    required: true,
+    label: 'ID',
+    field: 'id',
+    align: 'left',
+    sortable: true
   }
 ];
 
@@ -84,6 +95,7 @@ const columns: QTableColumn[] = [
 
 <template>
   <q-table
+    dense
     style='max-height: 30vh'
     flat
     bordered
@@ -92,7 +104,8 @@ const columns: QTableColumn[] = [
     :rows='rows'
     :columns='columns'
     :loading='isLoading'
-    row-key='flightIDs'
+    row-key='id'
+    :filter='filter'
     selection='single'
     :selected='selected'
     @selection='$emit("update:selected", $event.rows)'
@@ -100,7 +113,7 @@ const columns: QTableColumn[] = [
     :rows-per-page-options='[0, 10, 15, 20, 25, 50]'
   >
     <template v-slot:header-cell='props'>
-      <q-th v-if='props.col.name !== "id"' :props='props' class='text-white tex-gyre-adventor-bold'
+      <q-th :props='props' class='text-white tex-gyre-adventor-bold'
             style='font-size: large;'>
         {{ props.col.label }}
       </q-th>

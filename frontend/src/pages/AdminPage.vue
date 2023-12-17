@@ -337,7 +337,7 @@ const submitAddUser = () => {
           </q-form>
         </q-card-section>
 
-        <q-card-actions align='right' class='text-secondary'>
+        <q-card-actions align='between' class='text-secondary'>
           <q-btn class='bg-primary text-white tex-gyre-adventor-bold' label='Cancel' v-close-popup />
           <q-btn class='bg-primary text-white tex-gyre-adventor-bold' label='Submit' v-close-popup
                  @click='submitAddUser' />
