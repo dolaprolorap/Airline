@@ -221,8 +221,11 @@ const submitAddUser = () => {
   <q-page class='row items-center justify-center' style=''
   >
     <q-card>
-      <q-card-section class='column items-start' style='row-gap: 16px'>
+      <q-card-section class='q-pb-xs row items-end justify-between text-h3'>
         <q-select v-model='selectedOffice' :options='officeOptions' label='Office' dense outlined />
+        Admin panel
+      </q-card-section>
+      <q-card-section class='column items-start' style='row-gap: 16px'>
         <q-table
           style='max-height: 69vh'
           flat
