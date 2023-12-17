@@ -37,21 +37,37 @@ export const getNewTokens = async () => {
     });
 };
 export const authPost = async (url: string, data: object) => {
-  await getNewTokens();
-
   return api.post(url, data, {
     headers: {
       Authorization: 'Bearer ' + LocalStorage.getItem('accessToken')
     }
-  });
+  })
+    .catch(async error => {
+      if (error.response.status === 401) {
+        await getNewTokens();
+        return await api.post(url, data, {
+          headers: {
+            Authorization: 'Bearer ' + LocalStorage.getItem('accessToken')
+          }
+        });
+      } else throw `Unhandled error ${error}`;
+    });
 };
 
 export const authGet = async (url: string) => {
-  await getNewTokens();
-
   return api.get(url, {
     headers: {
       Authorization: 'Bearer ' + LocalStorage.getItem('accessToken')
     }
-  });
+  })
+    .catch(async error => {
+      if (error.response.status === 401) {
+        await getNewTokens();
+        return await api.get(url, {
+          headers: {
+            Authorization: 'Bearer ' + LocalStorage.getItem('accessToken')
+          }
+        });
+      } else throw `Unhandled error ${error}`;
+    });
 };
