@@ -55,6 +55,11 @@ const submitForm = () => {
           return;
         }
 
+        if (msg === 'Unactive'){
+          error.value = 'User unactive';
+          return;
+        }
+
       const accessToken = response.data.data.accessToken;
       const refreshToken = response.data.data.refreshToken;
 
