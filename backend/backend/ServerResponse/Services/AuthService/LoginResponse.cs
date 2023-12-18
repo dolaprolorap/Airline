@@ -3,6 +3,7 @@
     public enum LoginResponseType
     {
         UserWasNotFound,
+        UnactiveUser,
         InvalidPassword,
         TokensNotUpdated,
         Ok
@@ -18,6 +19,11 @@
                     Status = StatusResponseType.Success;
                     LoggerMsg = string.Format("User with email '{0}' not found", userEmail);
                     UserMsg = "UserNotFound";
+                    break;
+                case LoginResponseType.UnactiveUser:
+                    Status = StatusResponseType.Success;
+                    LoggerMsg = string.Format("User with email '{0}' is unactive", userEmail);
+                    UserMsg = "UnactiveUser";
                     break;
                 case LoginResponseType.InvalidPassword:
                     Status = StatusResponseType.Success;

@@ -39,6 +39,15 @@ namespace backend.Services
             }
 
             var user = queryableUsers.First();
+
+            if (user.Active == null || !user.Active!.Value)
+            {
+                _tracker.UnsuccessTryLogin(loginData.Email, "User unactive");
+                return new LoginResponse(
+                    LoginResponseType.UnactiveUser,
+                    userEmail: loginData.Email);
+            }
+
             if (_hasher.VerifyHashedPassword(user, user.Password, loginData.Password) != PasswordVerificationResult.Success)
             {
                 _tracker.UnsuccessTryLogin(loginData.Email, "Invalid password");
