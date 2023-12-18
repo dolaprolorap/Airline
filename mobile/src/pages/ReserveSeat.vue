@@ -1,7 +1,6 @@
 <template>
   <div class="main">
-    <div class="ticket-container">
-      Ticket number:
+    <div :class="['ticket-container', { 'center-input': !showImage, 'error-input': showError }]">
       <input
           type="text"
           v-model="passengerClass"
@@ -58,7 +57,7 @@
         </button>
       </div>
       <div v-else>
-        <p v-if="passengerClass === ''" class="message">
+        <p v-if="!showImage" class="message">
           Enter the ticket number to reserve a seat
         </p>
         <p v-else-if="passengerClass === '1'" class="message">
@@ -89,6 +88,7 @@ const showButtons = ref(false);
 const seatImage = ref();
 const selectedSeat = ref('');
 const isReserveSeatVisible = ref(false);
+const showError = ref(false);
 
 const seatConfig = {
   firstClass: [
@@ -129,6 +129,11 @@ const seatConfig = {
 
 const updateImage = () => {
   if (passengerClass.value !== '') {
+    const isValidNumber = ['1', '2', '3'].includes(passengerClass.value);
+    if (!isValidNumber) {
+      showError.value = true;
+      return;
+    }
     switch (passengerClass.value) {
       case '1':
         showImage.value = false;
@@ -140,12 +145,14 @@ const updateImage = () => {
         showImage.value = true;
         showButtons.value = true;
         isReserveSeatVisible.value = true;
+        showError.value = false;
         break;
       case '3':
         seatImage.value = '/src/assets/img/FirstClassSeats.png';
         showImage.value = true;
         showButtons.value = true;
         isReserveSeatVisible.value = true;
+        showError.value = false;
         break;
       default:
         showImage.value = false;
@@ -153,6 +160,11 @@ const updateImage = () => {
         isReserveSeatVisible.value = false;
         break;
     }
+  } else {
+    showError.value = false;
+    showImage.value = false;
+    showButtons.value = false;
+    isReserveSeatVisible.value = false;
   }
 };
 
@@ -211,10 +223,15 @@ const reserveSeatFirst = (row: string, seat: string) => {
   justify-content: center;
   margin-top: 20px;
   z-index: 1200;
+  margin-left: 30px;
 }
 
 .img_plane {
   position: relative;
+}
+
+.error-input input {
+  border: 2px solid rgb(200,0,0);
 }
 
 .label {
@@ -228,6 +245,7 @@ const reserveSeatFirst = (row: string, seat: string) => {
   padding: 5px 10px;
   cursor: pointer;
   background-color: white;
+  border-radius: 5px;
 }
 
 .mainmenu-router__link {
@@ -237,12 +255,25 @@ const reserveSeatFirst = (row: string, seat: string) => {
   width: 200px;
 }
 
+.center-input {
+  display: flex;
+  align-items: center;
+  position: relative;
+  top: 300px;
+}
+
+.center-input input {
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
 .back-button-container .wide-back-button {
   padding: 15px 90px;
   width: 350px;
   position: relative;
   right: 305px;
-  bottom: 70px;
+  bottom: 20px;
 }
 
 .back-button {
@@ -289,6 +320,8 @@ const reserveSeatFirst = (row: string, seat: string) => {
 .message {
   font-weight: 900;
   position: relative;
+  font-size: 18px;
+  text-align: center;
 }
 
 .button-container {
@@ -297,7 +330,7 @@ const reserveSeatFirst = (row: string, seat: string) => {
   align-items: center;
   width: 99%;
   position: absolute;
-  bottom: 20px;
+  bottom: 70px;
   z-index: 1000;
 }
 
@@ -321,7 +354,7 @@ const reserveSeatFirst = (row: string, seat: string) => {
   margin-left: 8%;
 }
 
-.message_reserve{
+.message_reserve {
   position: relative;
   bottom: 120px;
   display: flex;

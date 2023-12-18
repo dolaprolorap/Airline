@@ -63,7 +63,7 @@ const itemList = ref(initialList);
   width: 350px;
   left: 50%;
   transform: translateX(-50%);
-  border: 2px solid black;
+  border: 2px solid rgb(006, 075, 102);
   overflow-x: hidden;
   overflow-y: scroll;
 }
@@ -73,7 +73,7 @@ const itemList = ref(initialList);
 }
 
 .text-window li {
-  border-bottom: 2px solid black;
+  border-bottom: 1px solid rgb(25, 106, 166);
   padding: 10px;
   overflow: hidden;
 }
@@ -114,6 +114,6 @@ const itemList = ref(initialList);
 }
 
 .service{
-  color: grey;
+  color: rgb(237, 214, 136);
 }
 </style>
