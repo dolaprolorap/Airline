@@ -15,6 +15,7 @@ namespace backend.DataAccess.Repository
         IRepository<Role> RoleRepo { get; }
         IRepository<Route> RouteRepo { get; }
         IRepository<Schedule> ScheduleRepo { get; }
+        IRepository<Seat> SeatRepo { get; }
         IRepository<Survey> SurveyRepo { get; }
         IRepository<Ticket> TicketRepo { get; }
         IRepository<Token> TokenRepo { get; }

@@ -21,9 +21,9 @@ public partial class AirlinesdbContext : DbContext
 
     public virtual DbSet<Airport> Airports { get; set; }
 
-    public virtual DbSet<Amenitiesticket> Amenitiestickets { get; set; }
-
     public virtual DbSet<Amenity> Amenities { get; set; }
+
+    public virtual DbSet<Amenitiesticket> Amenitiestickets { get; set; }
 
     public virtual DbSet<Cabintype> Cabintypes { get; set; }
 
@@ -36,6 +36,8 @@ public partial class AirlinesdbContext : DbContext
     public virtual DbSet<Route> Routes { get; set; }
 
     public virtual DbSet<Schedule> Schedules { get; set; }
+
+    public virtual DbSet<Seat> Seats { get; set; }
 
     public virtual DbSet<Ticket> Tickets { get; set; }
 
@@ -102,31 +104,6 @@ public partial class AirlinesdbContext : DbContext
                 .HasConstraintName("FK_AirPort_Country");
         });
 
-        modelBuilder.Entity<Amenitiesticket>(entity =>
-        {
-            entity.HasKey(e => e.Id).HasName("PRIMARY");
-
-            entity
-                .ToTable("amenitiestickets")
-                .HasCharSet("utf8mb3")
-                .UseCollation("utf8mb3_general_ci");
-
-            entity.Property(e => e.Id).HasColumnName("ID");
-            entity.Property(e => e.AmenityId).HasColumnName("AmenityID");
-            entity.Property(e => e.TicketId).HasColumnName("TicketID");
-            entity.Property(e => e.Price).HasPrecision(19, 4);
-
-            entity.HasOne(d => d.Amenity).WithMany(p => p.Amenitiestickets)
-                .HasForeignKey(d => d.AmenityId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_AmenitiesTickets_Amenities");
-
-            entity.HasOne(d => d.Ticket).WithMany(p => p.Amenitiestickets)
-                .HasForeignKey(d => d.TicketId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_AmenitiesTickets_Tickets");
-        });
-
         modelBuilder.Entity<Amenity>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PRIMARY");
@@ -142,6 +119,23 @@ public partial class AirlinesdbContext : DbContext
                 .HasMaxLength(50)
                 .UseCollation("utf8mb4_0900_ai_ci")
                 .HasCharSet("utf8mb4");
+        });
+
+        modelBuilder.Entity<Seat>(entity =>
+        {
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
+
+            entity
+                .ToTable("seats")
+                .HasCharSet("utf8mb3")
+                .UseCollation("utf8mb3_general_ci");
+
+            entity.Property(e => e.Id).HasColumnName("ID");
+
+            entity.HasOne(d => d.Schedule).WithMany(p => p.Seats)
+                .HasForeignKey(d => d.ScheduleId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK_Seat_Schedule");
         });
 
         modelBuilder.Entity<Cabintype>(entity =>

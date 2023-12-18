@@ -103,6 +103,10 @@ namespace backend.Controllers
                     ConvertToActionResult();
             }
 
+            int lastId = 0;
+            var amenitiesTickets = _unit.AmenitiesticketRepo.ReadAll();
+            if (amenitiesTickets.Any()) lastId = amenitiesTickets.Max(a => a.Id);
+
             foreach(var amenityName in applyAmenities.AmenityNamesToApply)
             {
                 var queryableAmenity = amenities.Where(a => a.Service == amenityName);
@@ -115,13 +119,14 @@ namespace backend.Controllers
                          ConvertToActionResult();
                 }
 
-                Amenity amentity = queryableAmenity.First();
+                Amenity amenity = queryableAmenity.First();
 
                 _unit.AmenitiesticketRepo.Add(new Amenitiesticket()
                 {
-                    AmenityId = amentity.Id,
+                    AmenityId = amenity.Id,
                     TicketId = applyAmenities.TicketId,
-                    Price = amentity.Price
+                    Price = amenity.Price,
+                    Id = ++lastId
                 });
             }
 
@@ -134,16 +139,22 @@ namespace backend.Controllers
                 ConvertToActionResult();
         }
 
-        [HttpPost("MakeReport")]
+        [HttpGet("MakeReport")]
         public IActionResult MakeReport()
         {
-            return Ok();
-        }
-
-        [HttpPost("AmonicSummary")]
-        public IActionResult AmonicSummary()
-        {
-            return Ok();
+            Dictionary<string, object> amenitiesCounts = new Dictionary<string, object>();
+            var amenities = _unit.AmenityRepo.ReadAll();
+            var amenitiesTickets = _unit.AmenitiesticketRepo.ReadAll();
+            foreach (var amenity in amenities)
+            {
+                amenitiesCounts.Add(amenity.Service, amenitiesTickets.Count(a => a.AmenityId == amenity.Id));
+            }
+            return new StatusResponse(
+                StatusResponseType.Success,
+                "ReportMade",
+                "Report has been made",
+                amenitiesCounts).
+                ConvertToActionResult();
         }
     }
 }

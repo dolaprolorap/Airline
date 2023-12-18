@@ -11,8 +11,8 @@ using backend.DataAccess;
 namespace backend.Migrations
 {
     [DbContext(typeof(AirlinesdbContext))]
-    [Migration("20231217191552_ChangeAmenitiesTicket")]
-    partial class ChangeAmenitiesTicket
+    [Migration("20231218095007_DeleteAmenitiesticket")]
+    partial class DeleteAmenitiesticket
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -125,32 +125,24 @@ namespace backend.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("ID");
+                        .HasColumnType("int");
 
                     b.Property<int>("AmenityId")
-                        .HasColumnType("int")
-                        .HasColumnName("AmenityID");
+                        .HasColumnType("int");
 
                     b.Property<decimal>("Price")
-                        .HasPrecision(19, 4)
-                        .HasColumnType("decimal(19,4)");
+                        .HasColumnType("decimal(65,30)");
 
                     b.Property<int>("TicketId")
-                        .HasColumnType("int")
-                        .HasColumnName("TicketID");
+                        .HasColumnType("int");
 
-                    b.HasKey("Id")
-                        .HasName("PRIMARY");
+                    b.HasKey("Id");
 
                     b.HasIndex("AmenityId");
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("amenitiestickets", (string)null);
-
-                    MySqlEntityTypeBuilderExtensions.HasCharSet(b, "utf8mb3");
-                    MySqlEntityTypeBuilderExtensions.UseCollation(b, "utf8mb3_general_ci");
+                    b.ToTable("Amenitiesticket");
                 });
 
             modelBuilder.Entity("backend.Models.DB.Amenity", b =>
@@ -726,14 +718,14 @@ namespace backend.Migrations
                     b.HasOne("backend.Models.DB.Amenity", "Amenity")
                         .WithMany("Amenitiestickets")
                         .HasForeignKey("AmenityId")
-                        .IsRequired()
-                        .HasConstraintName("FK_AmenitiesTickets_Amenities");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("backend.Models.DB.Ticket", "Ticket")
                         .WithMany("Amenitiestickets")
                         .HasForeignKey("TicketId")
-                        .IsRequired()
-                        .HasConstraintName("FK_AmenitiesTickets_Tickets");
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Amenity");
 
