@@ -60,7 +60,7 @@ const submitForm = () => {
 
       LocalStorage.set('accessToken', accessToken);
       LocalStorage.set('refreshToken', refreshToken);
-      LocalStorage.set('email', email);
+      LocalStorage.set('email', email.value);
 
       api.defaults.headers.common['Authorization'] = `Bearer ${accessToken}`;
 

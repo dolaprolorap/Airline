@@ -73,7 +73,7 @@
             </q-th>
           </template>
           <template v-slot:body="props">
-            <q-tr :props="props" @click="props.selected = !props.selected">
+            <q-tr :props="props" @click="props.selected = !props.selected" v-if="props.row.active === true">
               <q-td>
                 <q-checkbox v-model="props.selected" color="secondary" />
               </q-td>
@@ -82,6 +82,20 @@
                 :key="col"
                 :props="props"
                 style="font-size: medium"
+              >
+                {{ props.row[col] }}
+              </q-td>
+            </q-tr>
+            <q-tr v-else>
+              <q-td class="bg-red text-white">
+                <q-checkbox v-model="props.selected" color="secondary" />
+              </q-td>
+              <q-td
+                v-for="col in visibleColumns"
+                :key="col"
+                :props="props"
+                style="font-size: medium"
+                class="bg-red text-white"
               >
                 {{ props.row[col] }}
               </q-td>
