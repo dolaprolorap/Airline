@@ -104,17 +104,14 @@ public partial class AirlinesdbContext : DbContext
 
         modelBuilder.Entity<Amenitiesticket>(entity =>
         {
-            entity.HasKey(e => new { e.AmenityId, e.TicketId })
-                .HasName("PRIMARY")
-                .HasAnnotation("MySql:IndexPrefixLength", new[] { 0, 0 });
+            entity.HasKey(e => e.Id).HasName("PRIMARY");
 
             entity
                 .ToTable("amenitiestickets")
                 .HasCharSet("utf8mb3")
                 .UseCollation("utf8mb3_general_ci");
 
-            entity.HasIndex(e => e.TicketId, "FK_AmenitiesTickets_Tickets");
-
+            entity.Property(e => e.Id).HasColumnName("ID");
             entity.Property(e => e.AmenityId).HasColumnName("AmenityID");
             entity.Property(e => e.TicketId).HasColumnName("TicketID");
             entity.Property(e => e.Price).HasPrecision(19, 4);
