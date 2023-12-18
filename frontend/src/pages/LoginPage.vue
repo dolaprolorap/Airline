@@ -55,7 +55,7 @@ const submitForm = () => {
           return;
         }
 
-        if (msg === 'Unactive'){
+        if (msg === 'UnactiveUser'){
           error.value = 'User unactive';
           return;
         }
