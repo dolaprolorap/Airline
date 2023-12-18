@@ -72,11 +72,11 @@
   </div>
   <div class="button-container">
     <router-link class="mainmenu-router__link" to="/">
-      <button class="back-button">Back</button>
+      <div class="back-button-container">
+        <button class="back-button" :class="{ 'wide-back-button': !isReserveSeatVisible }">Back</button>
+      </div>
     </router-link>
-    <button v-if="passengerClass === '2' || passengerClass === '3'"
-            class="reserve-seat__button">Reserve Seat
-    </button>
+    <button v-if="isReserveSeatVisible" class="reserve-seat__button">Reserve Seat</button>
   </div>
 </template>
 
@@ -88,6 +88,7 @@ const showImage = ref(false);
 const showButtons = ref(false);
 const seatImage = ref();
 const selectedSeat = ref('');
+const isReserveSeatVisible = ref(false);
 
 const seatConfig = {
   firstClass: [
@@ -132,20 +133,24 @@ const updateImage = () => {
       case '1':
         showImage.value = false;
         showButtons.value = false;
+        isReserveSeatVisible.value = false;
         break;
       case '2':
         seatImage.value = '/src/assets/img/BusinessClassSeats.png';
         showImage.value = true;
         showButtons.value = true;
+        isReserveSeatVisible.value = true;
         break;
       case '3':
         seatImage.value = '/src/assets/img/FirstClassSeats.png';
         showImage.value = true;
         showButtons.value = true;
+        isReserveSeatVisible.value = true;
         break;
       default:
         showImage.value = false;
         showButtons.value = false;
+        isReserveSeatVisible.value = false;
         break;
     }
   }
@@ -230,6 +235,14 @@ const reserveSeatFirst = (row: string, seat: string) => {
   display: block;
   margin: auto;
   width: 200px;
+}
+
+.back-button-container .wide-back-button {
+  padding: 15px 90px;
+  width: 350px;
+  position: relative;
+  right: 305px;
+  bottom: 70px;
 }
 
 .back-button {
