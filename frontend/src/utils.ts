@@ -1,10 +1,11 @@
 import { api } from 'boot/axios';
-
 import { LocalStorage } from 'quasar';
-
 import { Router } from 'src/router';
 
 export const exit = () => {
+
+  api.post('')
+
   LocalStorage.remove('accessToken');
   LocalStorage.remove('refreshToken');
   LocalStorage.remove('email');
