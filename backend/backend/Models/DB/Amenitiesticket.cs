@@ -5,6 +5,8 @@ namespace backend.Models.DB;
 
 public partial class Amenitiesticket
 {
+    public int Id { get; set; }
+
     public int AmenityId { get; set; }
 
     public int TicketId { get; set; }
