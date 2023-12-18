@@ -22,6 +22,12 @@ const roleName = LocalStorage.getItem('roleName');
           <q-btn style="font-size: large" flat :to="'/user'"> User panel</q-btn>
           <q-btn style="font-size: large" flat :to="'/flightmanager'"> flight schedule</q-btn>
           <q-btn style="font-size: large" flat :to="'/book-flights'"> book flight </q-btn>
+          <q-btn-dropdown style="font-size: large" auto-close  flat label="Report">
+          <q-list class="column">
+            <q-btn style="font-size: small" flat :to="'/summary-survey'">Summary Survey</q-btn>
+            <q-btn style="font-size: small" flat :to="'/detailed-survey'">Detailed Survey</q-btn>
+          </q-list>
+        </q-btn-dropdown>
         </q-toolbar-title>
         <q-btn
           round

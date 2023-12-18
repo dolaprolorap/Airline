@@ -1,4 +1,4 @@
-import {RouteRecordRaw} from 'vue-router';
+import { RouteRecordRaw } from 'vue-router';
 
 const routes: RouteRecordRaw[] = [
   {
@@ -7,9 +7,9 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: '',
-        component: () => import('pages/LoginPage.vue')
+        component: () => import('pages/LoginPage.vue'),
       },
-    ]
+    ],
   },
   {
     path: '/',
@@ -17,26 +17,34 @@ const routes: RouteRecordRaw[] = [
     children: [
       {
         path: 'admin',
-        component: () => import('pages/AdminPage.vue')
+        component: () => import('pages/AdminPage.vue'),
       },
       {
         path: 'user',
-        component: () => import('pages/UserPage.vue')
+        component: () => import('pages/UserPage.vue'),
       },
       {
         path: 'flightmanager',
-        component: () => import('pages/FlightEditor.vue')
+        component: () => import('pages/FlightEditor.vue'),
       },
       {
         path: 'book-flights',
-        component: () => import('pages/SearchFlightsPage.vue')
-      }
-    ]
+        component: () => import('pages/SearchFlightsPage.vue'),
+      },
+      {
+        path: 'summary-survey',
+        component: () => import('pages/FlightSurvey.vue'),
+      },
+      {
+        path: 'detailed-survey',
+        component: () => import('pages/DetailedSurvey.vue'),
+      },
+    ],
   },
   {
     path: '/:catchAll(.*)*',
-    component: () => import('pages/ErrorNotFound.vue')
-  }
+    component: () => import('pages/ErrorNotFound.vue'),
+  },
 ];
 
 export default routes;

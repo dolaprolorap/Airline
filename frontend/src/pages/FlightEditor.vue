@@ -50,8 +50,9 @@
       </q-card-section>
       <q-card-section class="column items-start" style="row-gap: 16px">
         <q-table
-          style="max-height: 69vh"
+          style="max-height: 50vh"
           flat
+          dense
           bordered
           separator="vertical"
           table-header-class="bg-primary"
