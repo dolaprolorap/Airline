@@ -49,7 +49,7 @@ p {
   bottom: 100px;
   left: 50%;
   transform: translateX(-50%);
-  border: 2px solid black;
+  border: 2px solid rgb(006, 075, 102);
   overflow-x: hidden;
   overflow-y: scroll;
   margin-top: 50px;
