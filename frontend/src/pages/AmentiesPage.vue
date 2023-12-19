@@ -1,6 +1,6 @@
 <script setup lang='ts'>
 import { ref } from 'vue';
-import PurchaseAmenties from "pages/PurchaseAmenties.vue";
+import PurchaseAmenties from "components/PurchaseAmenties.vue";
 import ReportAmenties from "components/ReportAmenties.vue";
 
 const tab = ref('purchase');
