@@ -9,7 +9,7 @@ The Amonic Airlines project is a website and mobile application where users and 
 - [Capacitor](https://capacitorjs.com/)
 - [ASP.NET](https://dotnet.microsoft.com/en-us/apps/aspnet)
 
-## Команда проекта
+## Project team
 - Mametev Artemiy
 - Gruzkov Bogdan
 - Shlik Daniil
