@@ -50,15 +50,15 @@ const submitForm = () => {
 
       const msg = response.data.msg;
 
-        if (msg === 'UserNotFound' || msg === 'InvalidPwd') {
-          error.value = 'Wrong username or password';
-          return;
-        }
+      if (msg === 'UserNotFound' || msg === 'InvalidPwd') {
+        error.value = 'Wrong username or password';
+        return;
+      }
 
-        if (msg === 'UnactiveUser'){
-          error.value = 'User unactive';
-          return;
-        }
+      if (msg === 'UnactiveUser') {
+        error.value = 'User unactive';
+        return;
+      }
 
       const accessToken = response.data.data.accessToken;
       const refreshToken = response.data.data.refreshToken;
@@ -79,7 +79,7 @@ const submitForm = () => {
       authGet('/Auth/GetMyself')
         .then(response => {
           const role = response.data.data.user.roleName;
-          console.log(role)
+          console.log(role);
 
           if (role === 'Administrator')
             Router.push({ path: '/admin' });
@@ -97,63 +97,71 @@ const closeBanner = () => {
 };
 
 function exit() {
+  window.close();
   return;
 }
 
 </script>
 <template>
-  <q-page class='row items-center justify-center'>
+  <q-page class='column justify-center items-center'>
     <q-card
-      class='q-pa-lg full-width column justify-center items-center'
+      class='q-px-lg q-pt-lg full-width column justify-center items-center'
       style='max-width: 25%'
     >
       <q-img src='logo.png' alt='Logo' />
-      <q-card-section class='full-width column' style='row-gap: 16px'>
-        <q-input
-          label='Email'
-          class='fit'
-          v-model='email'
-          outlined
-          dense
-          lazy-rules
-          :rules='usernameRules'
-        />
-        <q-input
-          v-model='password'
-          class='fit'
-          dense
-          outlined
-          lazy-rules
-          :rules='passwordRules'
-          :type="isPwd ? 'password' : 'text'"
-          label='Password'
-        >
-          <template v-slot:append>
-            <q-icon
-              :name="isPwd ? 'visibility_off' : 'visibility'"
-              class='cursor-pointer'
-              @click='isPwd = !isPwd'
-            />
-          </template>
-        </q-input>
-      </q-card-section>
-      <q-banner v-if='error !== ""' class='bg-red-1 text-white' style='border-radius: 10px'>
-        <q-card-section
-          @submit.prevent='submitForm'
-          v-if='error !== ""'
-          class='row full-width justify-center text-negative'>
-          {{ error }}
-          <q-btn round flat size='0px'
-                 style='position: absolute; top: -8px; right: -15px; padding: 1px; border: 0px solid transparent;'
-                 @click='closeBanner'>
-            <img src='public/black_crosss.png' style='width: 24px; height: 24px'>
-          </q-btn>
+      <q-form class='fit column' @submit='submitForm'>
+        <q-card-section class='q-pb-none'>
+          <q-input
+            label='Email'
+            v-model='email'
+            outlined
+            dense
+            lazy-rules
+            :rules='usernameRules'
+          />
+          <q-input
+            v-model='password'
+            dense
+            outlined
+            lazy-rules
+            :rules='passwordRules'
+            :type="isPwd ? 'password' : 'text'"
+            label='Password'
+          >
+            <template v-slot:append>
+              <q-icon
+                :name="isPwd ? 'visibility_off' : 'visibility'"
+                class='cursor-pointer'
+                @click='isPwd = !isPwd'
+              />
+            </template>
+          </q-input>
         </q-card-section>
-      </q-banner>
-      <q-card-section class='row full-width justify-between q-px-xl'>
-        <q-btn @click='submitForm' class='col-4' color='primary' label='Log in' />
-        <q-btn @click='exit' class='col-4' color='primary' label='Exit' />
-      </q-card-section>
+        <q-card-section class='q-py-none'>
+          <div>
+            <q-banner
+              v-if='error !== ""'
+              class='relative fit bg-red-2 text-negative row'
+              style='border-radius: 10px'
+              @submit.prevent='submitForm'
+            >
+              <div class='row justify-center'>
+                {{ error }}
+              </div>
+              <q-btn round flat size='8px'
+                     @click='closeBanner'
+                     class='q-mt-sm q-mr-lg absolute-top-right'
+                     text-color='negative'
+                     icon='close'
+              />
+            </q-banner>
+          </div>
+          <div class='row full-width justify-between q-pt-md q-px-md'>
+            <q-btn class='col-4' color='primary' label='Log in' type='submit' />
+            <q-btn @click='exit' class='col-4' color='primary' label='Exit' />
+          </div>
+        </q-card-section>
+      </q-form>
     </q-card>
   </q-page>
 </template>
