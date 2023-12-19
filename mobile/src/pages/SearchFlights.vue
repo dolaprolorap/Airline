@@ -227,7 +227,7 @@ select, input {
   margin: auto;
   cursor: pointer;
   position: relative;
-  bottom: 80px
+  bottom: 70px
 }
 
 .list_of_flights {
