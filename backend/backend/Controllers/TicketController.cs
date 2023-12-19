@@ -51,6 +51,8 @@ namespace backend.Controllers
             _unit.CabintypeRepo.ReadWhere(c => true).Load();
             var country = _unit.CountryRepo.ReadAll();
 
+            var seat = _unit.SeatRepo.ReadFirst(s => s.TicketId == ticket.Id);
+
             var data = new
             {
                 ticket.Id,
@@ -63,7 +65,8 @@ namespace backend.Controllers
                 ticket.PassportNumber,
                 PassportCountry = country.Where(c => c.Id == ticket.PassportCountryId).First().Name,
                 ticket.BookingReference,
-                ticket.Confirmed
+                ticket.Confirmed,
+                SeatNumber = seat == null ? null : (int?)seat.SeatNumber
             };
 
             return new StatusResponse(

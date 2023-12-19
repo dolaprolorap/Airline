@@ -132,10 +132,10 @@ public partial class AirlinesdbContext : DbContext
 
             entity.Property(e => e.Id).HasColumnName("ID");
 
-            entity.HasOne(d => d.Schedule).WithMany(p => p.Seats)
-                .HasForeignKey(d => d.ScheduleId)
+            entity.HasOne(s => s.Ticket).WithOne(t => t.Seat)
+                .HasForeignKey<Seat>(s => s.TicketId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_Seat_Schedule");
+                .HasConstraintName("FK_Seat_Ticket");
         });
 
         modelBuilder.Entity<Cabintype>(entity =>

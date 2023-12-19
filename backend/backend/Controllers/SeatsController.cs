@@ -3,6 +3,7 @@ using backend.Models.DB;
 using backend.ServerRequest.Controllers.SeatsController;
 using backend.ServerResponse;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace backend.Controllers
 {
@@ -30,7 +31,9 @@ namespace backend.Controllers
                     ConvertToActionResult();
             }
 
-            var seats = _unit.SeatRepo.ReadWhere(s => s.ScheduleId == ticket.ScheduleId).ToList();
+            _unit.SeatRepo.ReadWhere(s => true).Include(s => s.Ticket);
+
+            var seats = _unit.SeatRepo.ReadWhere(s => s.Ticket.ScheduleId == ticket.ScheduleId).ToList();
             return new StatusResponse(
                 StatusResponseType.Success,
                 "SeatsGotten",
@@ -52,18 +55,19 @@ namespace backend.Controllers
                     ConvertToActionResult();
             }
 
-
             var schedule = _unit.ScheduleRepo.ReadFirst(s => s.Id == ticket.ScheduleId);
 
-            if (_unit.SeatRepo.ReadFirst(s =>
-                s.ScheduleId == schedule.Id &&
-                s.SeatNumber == bookSeat.SeatNumber) != null)
+            var sameNumberSeats = _unit.SeatRepo.ReadWhere(s => s.SeatNumber == bookSeat.SeatNumber).Include(s => s.Ticket);
+            foreach(var sameNumberSeat in sameNumberSeats)
             {
-                return new StatusResponse(
-                    StatusResponseType.Success,
-                    "SeatBooked",
-                    "Seat with booked").
-                    ConvertToActionResult();
+                if(sameNumberSeat.Ticket.ScheduleId == schedule!.Id)
+                {
+                    return new StatusResponse(
+                        StatusResponseType.UserFail,
+                        "SeatAlreadyBooked",
+                        "Seat already booked"
+                        ).ConvertToActionResult();
+                }
             }
 
             var seats = _unit.SeatRepo.ReadWhere(s => true);
@@ -74,7 +78,7 @@ namespace backend.Controllers
             Seat seat = new Seat()
             {
                 Id = ++lastId,
-                ScheduleId = schedule.Id,
+                TicketId = bookSeat.TicketId,
                 SeatNumber = bookSeat.SeatNumber
             };
 

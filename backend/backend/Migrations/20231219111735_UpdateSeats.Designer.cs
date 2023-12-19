@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using backend.DataAccess;
 
@@ -10,9 +11,11 @@ using backend.DataAccess;
 namespace backend.Migrations
 {
     [DbContext(typeof(AirlinesdbContext))]
-    partial class AirlinesdbContextModelSnapshot : ModelSnapshot
+    [Migration("20231219111735_UpdateSeats")]
+    partial class UpdateSeats
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -139,7 +142,7 @@ namespace backend.Migrations
 
                     b.HasIndex("TicketId");
 
-                    b.ToTable("Amenitiestickets", (string)null);
+                    b.ToTable("Amenitiestickets");
                 });
 
             modelBuilder.Entity("backend.Models.DB.Amenity", b =>

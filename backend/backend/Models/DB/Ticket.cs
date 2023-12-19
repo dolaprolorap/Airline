@@ -34,4 +34,6 @@ public partial class Ticket
     public virtual Schedule Schedule { get; set; } = null!;
 
     public virtual User User { get; set; } = null!;
+
+    public virtual Seat Seat { get; set; } = null!;
 }
