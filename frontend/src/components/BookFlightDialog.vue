@@ -227,7 +227,7 @@ const billingDialog = ref(false);
       </q-card-actions>
     </q-card>
   </q-dialog>
-  <billing-flight-dialog :amount='amount' v-model:active='billingDialog' />
+  <BillingFlightDialog :amount='amount' v-model:active='billingDialog' />
 </template>
 
 <style scoped lang='sass'>

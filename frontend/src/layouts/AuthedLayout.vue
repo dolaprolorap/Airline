@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { exit } from 'src/utils';
 import { LocalStorage } from 'quasar';
-import AdminPage from 'pages/AdminPage.vue';
 
 const roleName = LocalStorage.getItem('roleName');
 </script>
@@ -20,14 +19,9 @@ const roleName = LocalStorage.getItem('roleName');
             Admin panel
           </q-btn>
           <q-btn style="font-size: large" flat :to="'/user'"> User panel</q-btn>
-          <q-btn style="font-size: large" flat :to="'/flightmanager'"> flight schedule</q-btn>
+          <q-btn style="font-size: large" flat :to="'/flight-manager'"> flight schedule</q-btn>
           <q-btn style="font-size: large" flat :to="'/book-flights'"> book flight </q-btn>
-          <q-btn-dropdown style="font-size: large" auto-close  flat label="Report">
-          <q-list class="column">
-            <q-btn style="font-size: small" flat :to="'/summary-survey'">Summary Survey</q-btn>
-            <q-btn style="font-size: small" flat :to="'/detailed-survey'">Detailed Survey</q-btn>
-          </q-list>
-        </q-btn-dropdown>
+          <q-btn style="font-size: large" flat :to="'/survey'"> Survey </q-btn>
         </q-toolbar-title>
         <q-btn
           round
@@ -47,3 +41,6 @@ const roleName = LocalStorage.getItem('roleName');
     </q-page-container>
   </q-layout>
 </template>
+
+<style scoped lang='sass'>
+</style>

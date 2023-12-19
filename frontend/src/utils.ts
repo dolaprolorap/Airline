@@ -3,9 +3,6 @@ import { LocalStorage } from 'quasar';
 import { Router } from 'src/router';
 
 export const exit = () => {
-
-  api.post('')
-
   LocalStorage.remove('accessToken');
   LocalStorage.remove('refreshToken');
   LocalStorage.remove('email');
@@ -17,12 +14,12 @@ export const getNewTokens = async () => {
   if (!LocalStorage.has('accessToken') || !LocalStorage.has('refreshToken')) {
     exit();
 
-    throw Error('Not authorized');
+    console.log('Not authorized, redirecting to login page')
   }
   return await api
     .post('/Auth/Refresh', {
       accessToken: LocalStorage.getItem('accessToken'),
-      refreshToken: LocalStorage.getItem('refreshToken'),
+      refreshToken: LocalStorage.getItem('refreshToken')
     })
     .then((response) => {
       const data = response.data;
@@ -31,9 +28,9 @@ export const getNewTokens = async () => {
       LocalStorage.set('refreshToken', data.data.refreshToken);
     })
     .catch((error) => {
-      if (error.response.status !== 200) {
+      if (error.response.status === 401) {
         exit();
-        throw Error('Not authorized');
+        console.log('Not authorized, redirecting to login page')
       }
     });
 };
@@ -45,27 +42,30 @@ export const authPost = async (
   const config = {
     headers: {
       Authorization: 'Bearer ' + LocalStorage.getItem('accessToken'),
-      ...headers,
-    },
+      ...headers
+    }
   };
-  return api.post(url, data, config).catch(async (error) => {
-    if (error.response.status === 401) {
-      await getNewTokens();
-      return await api.post(url, data, config);
-    } else throw `Unhandled error ${error}`;
-  });
+  return api.post(url, data, config)
+    .catch(async (error) => {
+      if (error.response.status === 401) {
+        await getNewTokens();
+        return await api.post(url, data, config);
+      } else throw `Unhandled error ${error}`;
+    });
 };
 export const authGet = async (url: string, headers: object = {}) => {
   const config = {
     headers: {
       Authorization: 'Bearer ' + LocalStorage.getItem('accessToken'),
-      ...headers,
-    },
+      ...headers
+    }
   };
-  return api.get(url, config).catch(async (error) => {
-    if (error.response.status === 401) {
-      await getNewTokens();
-      return await api.get(url, config);
-    } else throw `Unhandled error ${error}`;
-  });
+  return api.get(url, config)
+    .catch(async (error) => {
+      if (error.response.status === 401) {
+        await getNewTokens();
+        return await api.get(url, config);
+      } else
+        throw `Unhandled error ${error}`;
+    });
 };

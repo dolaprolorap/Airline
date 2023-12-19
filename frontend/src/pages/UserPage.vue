@@ -5,8 +5,8 @@
         <q-card-section class="text-h3">User Panel</q-card-section>
       </div>
       <q-splitter horizontal></q-splitter>
-      <q-card-section class="row">
-        <q-card-section class="col" style="font-size: larger">
+      <q-card-section class="q-pb-none row">
+        <q-card-section class=" col" style="font-size: larger">
           Hi, {{ email }}, Welcome to AMONIC Airlines.
         </q-card-section>
         <q-card-section class="col" style="font-size: larger">
@@ -16,9 +16,9 @@
           Number of crashes: {{ numberOfCraches }}
         </q-card-section>
       </q-card-section>
-      <q-card-section class="column items-start" style="row-gap: 16px">
+      <q-card-section class="q-pt-none column items-start" style="row-gap: 16px">
         <q-table
-          style="max-height: 69vh"
+          style="max-height: 60vh"
           flat
           bordered
           separator="vertical"
@@ -26,6 +26,7 @@
           :rows="rows"
           :columns="columns"
           row-key="id"
+          :rows-per-page-options='[0, 10, 15, 20, 25, 50]'
         >
           <template v-slot:header-cell="props">
             <q-th
@@ -75,7 +76,7 @@ import { authGet } from 'src/utils';
 const email = LocalStorage.getItem('email');
 
 const time = ref('');
-const numberOfCraches = ref('');
+const numberOfCraches = ref(0);
 
 const visibleColumns = ref([
   'date',

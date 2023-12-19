@@ -24,21 +24,17 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/UserPage.vue'),
       },
       {
-        path: 'flightmanager',
-        component: () => import('pages/FlightEditor.vue'),
+        path: 'flight-manager',
+        component: () => import('pages/FlightManagerPage.vue'),
       },
       {
         path: 'book-flights',
-        component: () => import('pages/SearchFlightsPage.vue'),
+        component: () => import('pages/BookFlightsPage.vue'),
       },
       {
-        path: 'summary-survey',
-        component: () => import('pages/FlightSurvey.vue'),
-      },
-      {
-        path: 'detailed-survey',
-        component: () => import('pages/DetailedSurvey.vue'),
-      },
+        path: 'survey',
+        component: () => import('pages/SurveyPage.vue'),
+      }
     ],
   },
   {
