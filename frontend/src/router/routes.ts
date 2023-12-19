@@ -34,6 +34,10 @@ const routes: RouteRecordRaw[] = [
       {
         path: 'survey',
         component: () => import('pages/SurveyPage.vue'),
+      },
+      {
+        path: 'amenties',
+        component: () => import('pages/AmentiesPage.vue'),
       }
     ],
   },
