@@ -1,5 +1,4 @@
 <template>
-  <q-page class="row items-center justify-center" style="">
     <q-card>
       <q-card-section class="row justify-end text-h3"
         >Amenties Report
@@ -42,7 +41,6 @@
         </q-table>
       </q-card-section>
     </q-card>
-  </q-page>
 </template>
 
 <script setup lang="ts">

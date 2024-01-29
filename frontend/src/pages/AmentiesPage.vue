@@ -15,7 +15,7 @@ const tab = ref('purchase');
       <q-tab name='purchase' icon='description' label='purchase' />
       <q-tab name='report' icon='feed' label='report' />
     </q-tabs>
-    <q-tab-panels v-model='tab' animated keep-alive>
+    <q-tab-panels v-model='tab' animated >
       <q-tab-panel name='purchase'>
         <PurchaseAmenties />
       </q-tab-panel>
