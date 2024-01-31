@@ -158,7 +158,7 @@ const confirm = () => {
 </script>
 
 <template>
-  <q-card style='min-width: 1000px; max-height: 80vh; overflow: auto'>
+  <q-card style='min-width: 1000px; max-height: 73vh; overflow: auto'>
     <q-card-section class='row justify-end text-h3'
     >Purchase Amenties
     </q-card-section>

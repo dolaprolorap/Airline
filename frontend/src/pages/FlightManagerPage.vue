@@ -448,7 +448,7 @@ const importish = () => {
       <q-splitter class='q-pt-none' horizontal />
       <q-card-section class='column items-start' style='row-gap: 16px'>
         <q-table
-          style='max-height: 55vh'
+          style='max-height: 50vh; min-width: 90vw'
           flat
           dense
           bordered

@@ -219,7 +219,7 @@ const submitAddUser = () => {
       <q-splitter horizontal/>
       <q-card-section class='column items-start' style='row-gap: 16px'>
         <q-table
-          style='max-height: 69vh'
+          style='max-height: 65vh; min-width: 65vw'
           flat
           bordered
           separator='vertical'

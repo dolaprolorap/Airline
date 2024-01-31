@@ -124,7 +124,7 @@ const billingDialog = ref(false);
             @update:model-value='$emit("update:active", $event.value)'
             @hide='clearDialog'
   >
-    <q-card class='column items-center no-wrap' style='min-width: 40%'>
+    <q-card class='column items-center no-wrap' style='min-width: 55%'>
       <q-card-section class='fit row items-end justify-end text-h3'>
         Confirm booking
       </q-card-section>

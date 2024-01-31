@@ -238,7 +238,7 @@ onMounted(async () => {
 
     <q-card-section class='column items-start' style='row-gap: 16px'>
       <q-table
-        style='max-height: 67vh'
+        style='max-height: 57vh; max-width: 95vw'
         flat
         dense
         hide-pagination
@@ -270,12 +270,12 @@ onMounted(async () => {
           </q-tr>
           <q-tr
             class='text-white tex-gyre-adventor-bold bg-primary'
-            style='font-size: large;'
+            style='font-size: large'
           >
             <q-th
               :props='props'
               key='question'
-              style='text-align: center; font-size: large; padding: 8px 0'
+              style='text-align: center; font-size: large; padding: 8px 0; max-width: 25vw'
             >question
             </q-th>
             <q-th

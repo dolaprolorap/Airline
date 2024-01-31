@@ -18,7 +18,7 @@
       </q-card-section>
       <q-card-section class="q-pt-none column items-start" style="row-gap: 16px">
         <q-table
-          style="max-height: 60vh"
+          style="max-height: 60vh; min-width: 65vw"
           flat
           bordered
           separator="vertical"
